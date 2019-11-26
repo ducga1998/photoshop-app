@@ -1,0 +1,1518 @@
+{
+  "photobook": {
+    "nguyenminhduc": {
+      "duc" : "nguye minh duc" 
+    },
+    "coverid": "2017_07_22_IMG_1254.JPG",
+    "pagespreads": [
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.603002,
+              "width": 1,
+              "x": 0,
+              "y": 0.198499
+            },
+            "layouthint": 0,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.379726,
+              "width": 0.419817,
+              "x": 0.540091,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1161.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.603002,
+              "width": 1,
+              "x": 0,
+              "y": 0.198499
+            },
+            "layouthint": 0,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.379726,
+              "width": 0.419817,
+              "x": 0.540091,
+              "y": 0.540091
+            },
+            "uniqueId": "2017_07_22_IMG_1162.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 0,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0.0473856,
+              "width": 0.03125,
+              "x": 0.227022,
+              "y": 0.294935
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.407407,
+              "width": 0.203704,
+              "x": 0.037037,
+              "y": 0.0740741
+            },
+            "uniqueId": "2017_07_22_IMG_1165.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.130719,
+              "width": 0.0867034,
+              "x": 0.172181,
+              "y": 0.176062
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.407407,
+              "width": 0.203704,
+              "x": 0.259259,
+              "y": 0.0740741
+            },
+            "uniqueId": "2017_07_22_IMG_1170.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.115809,
+              "width": 0.126634,
+              "x": 0.388072,
+              "y": 0.220282
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.407407,
+              "width": 0.203704,
+              "x": 0.037037,
+              "y": 0.518519
+            },
+            "uniqueId": "2017_07_22_IMG_1172.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.145425,
+              "width": 0.0744485,
+              "x": 0.164828,
+              "y": 0.294935
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.407407,
+              "width": 0.203704,
+              "x": 0.259259,
+              "y": 0.518519
+            },
+            "uniqueId": "2017_07_22_IMG_1173.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.0680147,
+              "width": 0.0727124,
+              "x": 0.416258,
+              "y": 0.265931
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 1,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.555556,
+              "width": 0.277778,
+              "x": 0.537037,
+              "y": 0.0740741
+            },
+            "uniqueId": "2017_07_22_IMG_1175.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.0680147,
+              "width": 0.0751634,
+              "x": 0.412173,
+              "y": 0.262868
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 1,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.833333,
+              "y": 0.37037
+            },
+            "uniqueId": "2017_07_22_IMG_1174.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.0793505,
+              "width": 0.064951,
+              "x": 0.430964,
+              "y": 0.210478
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 1,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.685185,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1176.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.136949,
+              "width": 0.14665,
+              "x": 0.384804,
+              "y": 0.185049
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 1,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.833333,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1177.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 1,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0.468751,
+              "width": 0.288281,
+              "x": 0.307031,
+              "y": 0.470833
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.0761715,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 1,
+              "width": 0.5,
+              "x": 0,
+              "y": 0
+            },
+            "uniqueId": "2017_07_22_IMG_1182.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.484375,
+              "width": 0.221094,
+              "x": 0.400781,
+              "y": 0.478125
+            },
+            "croprect": {
+              "height": 0.964798,
+              "width": 1,
+              "x": 0,
+              "y": 0.035202
+            },
+            "layouthint": 1,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.469373,
+              "x": 0.515314,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1184.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 2,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 3166,
+            "pixelwidth": 9990,
+            "targetrect": {
+              "height": 0.633834,
+              "width": 1,
+              "x": 0,
+              "y": 0.183083
+            },
+            "uniqueId": "2017_07_22_IMG_1185.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 3,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.793992,
+              "width": 1,
+              "x": 0,
+              "y": 0.103004
+            },
+            "layouthint": 1,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.404504,
+              "width": 0.339637,
+              "x": 0.0801814,
+              "y": 0.0801826
+            },
+            "uniqueId": "2017_07_22_IMG_1186.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.793992,
+              "width": 1,
+              "x": 0,
+              "y": 0.103004
+            },
+            "layouthint": 1,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.404504,
+              "width": 0.339637,
+              "x": 0.0801814,
+              "y": 0.515314
+            },
+            "uniqueId": "2017_07_22_IMG_1187.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.927057,
+              "x": 0.0364715,
+              "y": 0
+            },
+            "layouthint": 2,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.419817,
+              "x": 0.540091,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1188.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 4,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.669404,
+              "x": 0.165298,
+              "y": 0
+            },
+            "layouthint": 1,
+            "pixelheight": 3098,
+            "pixelwidth": 9256,
+            "targetrect": {
+              "height": 1,
+              "width": 1,
+              "x": 2.98023e-8,
+              "y": 2.98023e-8
+            },
+            "uniqueId": "2017_07_22_IMG_1190.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 5,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.461704,
+              "x": 0.269148,
+              "y": 0
+            },
+            "layouthint": 2,
+            "pixelheight": 2936,
+            "pixelwidth": 13548,
+            "targetrect": {
+              "height": 0.938745,
+              "width": 1,
+              "x": 2.98023e-8,
+              "y": 0.0306274
+            },
+            "uniqueId": "2017_07_22_IMG_1191.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 6,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.603002,
+              "width": 1,
+              "x": 0,
+              "y": 0.198499
+            },
+            "layouthint": 2,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.379726,
+              "width": 0.419817,
+              "x": 0.0400913,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1193.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.603002,
+              "width": 1,
+              "x": 0,
+              "y": 0.198499
+            },
+            "layouthint": 2,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.379726,
+              "width": 0.419817,
+              "x": 0.0400913,
+              "y": 0.540091
+            },
+            "uniqueId": "2017_07_22_IMG_1194.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.263541,
+              "width": 0.407032,
+              "x": 0.344531,
+              "y": 0.479167
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.173047,
+              "y": 0
+            },
+            "layouthint": 2,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.555556,
+              "width": 0.277778,
+              "x": 0.537037,
+              "y": 0.0740741
+            },
+            "uniqueId": "2017_07_22_IMG_1196.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.289583,
+              "width": 0.527343,
+              "x": 0.371875,
+              "y": 0.441667
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.35,
+              "x": 0.460546,
+              "y": 0
+            },
+            "layouthint": 2,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.555556,
+              "width": 0.12963,
+              "x": 0.833333,
+              "y": 0.0740741
+            },
+            "uniqueId": "2017_07_22_IMG_1197.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.326042,
+              "width": 0.423437,
+              "x": 0.347656,
+              "y": 0.433333
+            },
+            "croprect": {
+              "height": 0.622222,
+              "width": 1,
+              "x": 0,
+              "y": 0.285243
+            },
+            "layouthint": 2,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.277778,
+              "x": 0.537037,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1200.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.125,
+              "y": 0
+            },
+            "layouthint": 2,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.833333,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1203.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 7,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0.125
+            },
+            "layouthint": 3,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.938745,
+              "width": 0.469373,
+              "x": 0.0153137,
+              "y": 0.0306274
+            },
+            "uniqueId": "2017_07_22_IMG_1204.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.0401348,
+              "width": 0.0343137,
+              "x": 0.305556,
+              "y": 0.425858
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.509302,
+              "x": 0.0680618,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.129734,
+              "x": 0.515314,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1205.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.703803,
+              "x": 0.148098,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.179278,
+              "x": 0.660361,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1214.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.509302,
+              "x": 0.245349,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.129733,
+              "x": 0.854953,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1215.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 8,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.824039,
+              "width": 1,
+              "x": 0,
+              "y": 0.0879807
+            },
+            "layouthint": 4,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.419811,
+              "width": 0.339637,
+              "x": 0.0801814,
+              "y": 0.290094
+            },
+            "uniqueId": "2017_07_22_IMG_1216.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0.125
+            },
+            "layouthint": 5,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.839635,
+              "width": 0.419817,
+              "x": 0.540091,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1218.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 9,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.869565,
+              "width": 1,
+              "x": 0,
+              "y": 0.0652174
+            },
+            "layouthint": 3,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.555556,
+              "width": 0.425926,
+              "x": 0.037037,
+              "y": 0.0740741
+            },
+            "uniqueId": "2017_07_22_IMG_1219.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0.378125,
+              "width": 0.227344,
+              "x": 0.2375,
+              "y": 0.533333
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.037037,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1220.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.622449,
+              "width": 1,
+              "x": 0,
+              "y": 0.188776
+            },
+            "layouthint": 3,
+            "pixelheight": 5096,
+            "pixelwidth": 3172,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.185185,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1221.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.670199,
+              "width": 1,
+              "x": 0,
+              "y": 0.1649
+            },
+            "layouthint": 3,
+            "pixelheight": 4718,
+            "pixelwidth": 3162,
+            "targetrect": {
+              "height": 0.259259,
+              "width": 0.12963,
+              "x": 0.333333,
+              "y": 0.666667
+            },
+            "uniqueId": "2017_07_22_IMG_1222.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0.125
+            },
+            "layouthint": 1,
+            "pixelheight": 1280,
+            "pixelwidth": 960,
+            "targetrect": {
+              "height": 0.549578,
+              "width": 0.274789,
+              "x": 0.515314,
+              "y": 0.0306274
+            },
+            "uniqueId": "2017_07_22_IMG_1223.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.509247,
+              "x": 0.245377,
+              "y": 0
+            },
+            "layouthint": 1,
+            "pixelheight": 1280,
+            "pixelwidth": 960,
+            "targetrect": {
+              "height": 0.938745,
+              "width": 0.17927,
+              "x": 0.805416,
+              "y": 0.0306274
+            },
+            "uniqueId": "2017_07_22_IMG_1224.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.869855,
+              "width": 1,
+              "x": 0,
+              "y": 0.0650728
+            },
+            "layouthint": 1,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.35854,
+              "width": 0.274789,
+              "x": 0.515314,
+              "y": 0.610833
+            },
+            "uniqueId": "2017_07_22_IMG_1225.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 10,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.125,
+              "y": 0
+            },
+            "layouthint": 6,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.339637,
+              "x": 0.0801814,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1226.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.608643,
+              "x": 0.195679,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 4172,
+            "pixelwidth": 3100,
+            "targetrect": {
+              "height": 0.839635,
+              "width": 0.189863,
+              "x": 0.540091,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1229.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.557035,
+              "x": 0.221483,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 3902,
+            "pixelwidth": 3168,
+            "targetrect": {
+              "height": 0.839635,
+              "width": 0.189863,
+              "x": 0.770046,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1230.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 11,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.513022,
+              "x": 0.243489,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 2936,
+            "pixelwidth": 13632,
+            "targetrect": {
+              "height": 0.839635,
+              "width": 1,
+              "x": 2.98023e-8,
+              "y": 0.0801826
+            },
+            "uniqueId": "2017_07_22_IMG_1227.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 12,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.75,
+              "width": 1,
+              "x": 0,
+              "y": 0.125
+            },
+            "layouthint": 2,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.500023,
+              "width": 0.250011,
+              "x": 0.0400913,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1233.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.490665,
+              "x": 0.254667,
+              "y": 0
+            },
+            "layouthint": 2,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.839635,
+              "width": 0.154492,
+              "x": 0.305416,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1234.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.823921,
+              "width": 1,
+              "x": 0,
+              "y": 0.0880395
+            },
+            "layouthint": 2,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.308985,
+              "width": 0.250011,
+              "x": 0.0400913,
+              "y": 0.610833
+            },
+            "uniqueId": "2017_07_22_IMG_1235.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.745356,
+              "x": 0.127322,
+              "y": 0
+            },
+            "layouthint": 4,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.189863,
+              "x": 0.540091,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1238.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.745356,
+              "x": 0.127322,
+              "y": 0
+            },
+            "layouthint": 4,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.189863,
+              "x": 0.770046,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1239.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 13,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.866361,
+              "width": 1,
+              "x": 0,
+              "y": 0.0668194
+            },
+            "layouthint": 4,
+            "pixelheight": 3206,
+            "pixelwidth": 8178,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 1,
+              "x": 2.98023e-8,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1240.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 14,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 1,
+              "x": 0,
+              "y": 0
+            },
+            "layouthint": 5,
+            "pixelheight": 3130,
+            "pixelwidth": 11466,
+            "targetrect": {
+              "height": 0.545962,
+              "width": 1,
+              "x": 0,
+              "y": 0.227019
+            },
+            "uniqueId": "2017_07_22_IMG_1241.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 15,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.125,
+              "y": 0
+            },
+            "layouthint": 7,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.839635,
+              "width": 0.419817,
+              "x": 0.0400913,
+              "y": 0.0801825
+            },
+            "uniqueId": "2017_07_22_IMG_1244.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.125,
+              "y": 0
+            },
+            "layouthint": 8,
+            "pixelheight": 2448,
+            "pixelwidth": 3264,
+            "targetrect": {
+              "height": 0.419811,
+              "width": 0.209906,
+              "x": 0.645047,
+              "y": 0.290094
+            },
+            "uniqueId": "2017_07_22_IMG_1245.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 16,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.793992,
+              "width": 1,
+              "x": 0,
+              "y": 0.103004
+            },
+            "layouthint": 5,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.404504,
+              "width": 0.339637,
+              "x": 0.0801814,
+              "y": 0.0801826
+            },
+            "uniqueId": "2017_07_22_IMG_1249.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 0.793992,
+              "width": 1,
+              "x": 0,
+              "y": 0.103004
+            },
+            "layouthint": 5,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 0.404504,
+              "width": 0.339637,
+              "x": 0.0801814,
+              "y": 0.515314
+            },
+            "uniqueId": "2017_07_22_IMG_1250.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.412031,
+              "x": 0.293984,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.104956,
+              "x": 0.540091,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1253.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.703803,
+              "x": 0.148098,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.179278,
+              "x": 0.660361,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1254.JPG"
+          },
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.412031,
+              "x": 0.293984,
+              "y": 0
+            },
+            "layouthint": 3,
+            "pixelheight": 3264,
+            "pixelwidth": 2448,
+            "targetrect": {
+              "height": 0.679275,
+              "width": 0.104956,
+              "x": 0.854953,
+              "y": 0.160363
+            },
+            "uniqueId": "2017_07_22_IMG_1255.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 17,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.794073,
+              "x": 0.102963,
+              "y": 0
+            },
+            "layouthint": 6,
+            "pixelheight": 3162,
+            "pixelwidth": 7964,
+            "targetrect": {
+              "height": 1,
+              "width": 1,
+              "x": 2.98023e-8,
+              "y": 2.98023e-8
+            },
+            "uniqueId": "2017_07_22_IMG_1256.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 18,
+        "rightLayoutIndex": 0
+      },
+      {
+        "assets": [
+          {
+            "aoirect": {
+              "height": 0,
+              "width": 0,
+              "x": 0.5,
+              "y": 0.5
+            },
+            "croprect": {
+              "height": 1,
+              "width": 0.75,
+              "x": 0.125,
+              "y": 0
+            },
+            "layouthint": 0,
+            "pixelheight": 960,
+            "pixelwidth": 1280,
+            "targetrect": {
+              "height": 1,
+              "width": 0.5,
+              "x": 0,
+              "y": 0
+            },
+            "uniqueId": "2017_07_22_IMG_1257.JPG"
+          }
+        ],
+        "leftLayoutIndex": 0,
+        "pagespreadIndex": 19,
+        "rightLayoutIndex": 0
+      }
+    ]
+  }
+}

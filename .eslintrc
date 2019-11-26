@@ -1,0 +1,26 @@
+{
+  "extends": "react-app",
+  "parser": "babel-eslint",
+  "plugins": [
+    "react"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true
+  },
+  "rules": {
+    "no-undef": "error",
+    "no-unused-expressions": "error",
+    "no-unused-vars": "error",
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": true,
+        "classes": true
+      }
+    ],
+    "jsx-a11y/alt-text": "off",
+    "jsx-a11y/anchor-has-content": "off"
+  }
+}

@@ -1,0 +1,45 @@
+# Javascript Node CircleCI 2.0 configuration file
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+# Author: ManhNV
+version: 2
+jobs:
+  # job deploy staging **************************************************************************
+  deploy-staging:
+    docker:
+      - image: bbbdevteam9x/ci-node:v10
+    environment:
+      BRANCH: staging
+      DEPLOYMENT: ubuntu@photobook-dev.vmo.group
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: build
+          command: yarn build:$BRANCH
+      # sync s3 photobook-app
+      - run:
+          name: Sync s3 bucket
+          command: cd build && aws s3 sync . s3://c2-photobook
+      - run:
+          name: deployment-staging
+          command: |
+            ssh -o "StrictHostKeyChecking no" $DEPLOYMENT "cd project/photobook-webapp && git checkout -- . && git checkout develop && git pull --force && ./deploy-staging.sh"
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - deploy-staging:
+          filters:
+            branches:
+              only: staging

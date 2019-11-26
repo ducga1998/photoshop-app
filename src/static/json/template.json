@@ -1,0 +1,42 @@
+{
+  "templateName": "Modern 01",
+  "defaultColor": "#FFFFFF",
+  "intrinsicHeight": 5000,
+  "createdAt": 1565259884306,
+  "coverType": "graphics",
+  "aspect": "template",
+  "intrinsicWidth": 10000,
+  "id": "modern-01GS",
+  "elements": [
+    {
+      "id": "coverElement1",
+      "source": {
+        "path": "https://s3-ap-southeast-1.amazonaws.com/albumstory-gps-v2-dev-attachmentsbucket-geque8uew44a/templates/modern-01GS/coverElement1.png",
+        "rotate": 0,
+        "fileName": "coverElement1.png",
+        "resized": "https://s3-ap-southeast-1.amazonaws.com/albumstory-gps-v2-dev-resizedbucket-grv1d31h7lsf/templates/modern-01GS/coverElement1.png",
+        "flipHorizontal": false,
+        "flipVertical": false,
+        "type": "AWS_S3_COVER",
+        "crop": {
+          "right": 1,
+          "top": 0,
+          "left": 0,
+          "bottom": 1
+        }
+      },
+      "type": "IMAGE",
+      "class": "graphic",
+      "target": {
+        "right": 1,
+        "top": 0,
+        "left": 0,
+        "bottom": 1
+      },
+      "zIndex": 0
+    }
+  ],
+  "frames": {
+    "borderRadius": 0
+  }
+}

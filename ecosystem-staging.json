@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "photobook-webapp-staging",
+      "script": "npm --name \"next\" -- run start",
+      "merge_logs": true
+    }
+  ]
+}
