@@ -4,129 +4,213 @@ import { List } from 'immutable';
 import {
   convertRawDataToStandard,
   getIndexSpreadAndSpreadData,
-  swapData,
 } from '../../helpers/utils';
 import config from '../../config';
 import * as uuid from 'uuid';
-import ReduxUndo, { excludeAction } from 'redux-undo';
+import _omit from 'lodash/omit';
+import imageStoreAction from './actions';
+import { undoable } from '../../helpers/undoable';
 
 let INITIAL_STATE = {
   initImageState: [],
   selected: [],
   spread: null,
   gallery: [],
+  gallerySelected: [],
 };
 const imageStoreReduce = handleActions(
   {
-    SET_SELECTED: (state, { payload: options }) => {
-      // if options === null => selected : []
-      // selected has been to object to array
-      return { ...state, ...{ selected: options } };
-    },
-    INIT_DATA: (state, { payload: rawData }) => {
-      const standardData = convertRawDataToStandard(rawData);
-      return { ...state, ...standardData };
-    },
-    SWAP_IMG: (state, { payload: { idDrapStart, idDrop } }) => {
-      console.log('idDrapStart, idDrop', idDrapStart, idDrop);
-      // start get imageSpread
-      const listImmutable = List(state.initImageState);
-      const { imageSpread, indexPage } = getIndexSpreadAndSpreadData(state);
-      const cloneImageSpead = imageSpread.assets.slice();
-      const result = swapData(cloneImageSpead, idDrapStart, idDrop);
-      const changeArray = listImmutable.setIn([indexPage, 'assets'], result);
-      return { ...state, ...{ initImageState: changeArray.toArray() } };
-    },
-    // change image as use data action  (idElement)
-    CHANGE_IMG_DATA: (state, { payload: { data, idDrop } }) => {
-      const listImmutable = List(state.initImageState);
-      const { imageSpread, indexPage } = getIndexSpreadAndSpreadData(state);
-      // check 2 case :
-      // TH1 : drop img to gallery ===> add param idDrop object
-      // TH2  : use for rotate, flipX,flipY and every data in img , (no add param idDrop, only add data obj )
-      const newImageSpead = imageSpread.assets.map(item => {
-        if (
-          item.idElement === idDrop ||
-          (!idDrop &&
-            state.selected.some(select => select.idElement === item.idElement))
-        ) {
-          item = { ...item, ...data };
+    IMAGE: {
+      SET_SELECTED: (state, { payload: options }) => {
+        // if options === null => selected : []
+        // selected has been to object to array
+        return { ...state, ...{ selected: options } };
+      },
+      INIT_DATA: (state, { payload: rawData }) => {
+        let standardData;
+        const { initImageState, gallery } = convertRawDataToStandard(rawData);
+        if (process.browser) {
+          const storecache = localStorage.getItem('pwa-store');
+          if (!storecache || (storecache && storecache.length === 0)) {
+            standardData = { initImageState, gallery };
+          } else {
+            standardData = { ...JSON.parse(storecache), ...{ gallery } };
+          }
         }
-        return item;
-      });
-      const changeArray = listImmutable.setIn(
-        [indexPage, 'assets'],
-        newImageSpead,
-      );
-      return { ...state, ...{ initImageState: changeArray.toArray() } };
-    },
-    RE_LAYOUT: (state, { payload: data }) => {
-      const listImmutable = List(state.initImageState);
-      const { indexPage ,imageSpread} = getIndexSpreadAndSpreadData(state);
-      const { assets } = data;
-      console.log("imageSpread.assets",imageSpread.assets)
-      const datatest = assets.map(asset => {
-        const oldData = imageSpread.assets.find(item =>  !item.src.includes(asset.uniqueId) && item.uniqueId === asset.uniqueId )
-        console.log("oldData",oldData)
+        return { ...state, ...standardData };
+      },
+      SWAP_IMG: (state, { payload: { idDrapStart, idDrop } }) => {
+        const listImmutable = List(state.initImageState);
+        const { indexPage } = getIndexSpreadAndSpreadData(state);
+        const imageSpread = listImmutable.getIn([indexPage, 'assets']);
+        const indexDrag = imageSpread.findIndex(
+          i => i.idElement === idDrapStart,
+        );
+        const indexDrop = imageSpread.findIndex(i => i.idElement === idDrop);
+        const drag = listImmutable.getIn([indexPage, 'assets', indexDrag]);
+        const drop = listImmutable.getIn([indexPage, 'assets', indexDrop]);
+        const listSwapKey = [
+          'croprect',
+          'src',
+          'rotate',
+          'flipHorizontal',
+          'flipVertical',
+          'filterColor',
+        ];
+        const changeArray = listSwapKey.reduce((acc, key) => {
+          return acc
+            .setIn([indexPage, 'assets', indexDrag, key], drop[key])
+            .setIn([indexPage, 'assets', indexDrop, key], drag[key]);
+        }, listImmutable);
+        return { ...state, ...{ initImageState: changeArray.toArray() } };
+      },
+      CHANGE_LIST_IMG_DATA: (state, { payload: listDataChange }) => {
+        const {
+          imageSpread,
+          indexPage,
+          listImmutable,
+        } = getIndexSpreadAndSpreadData(state);
+        const newImageSpead = imageSpread.assets.map(item => {
+          // check array
+          const listChange = listDataChange.find(
+            itemDataChange => itemDataChange.idElement === item.idElement,
+          );
+          if (listChange) {
+            return { ...item, ..._omit(listChange, 'idElement') };
+          }
+          return item;
+        });
+        const changeArray = listImmutable.setIn(
+          [indexPage, 'assets'],
+          newImageSpead,
+        );
+        return { ...state, ...{ initImageState: changeArray.toArray() } };
+      },
+      // change image as use data action  (idElement)
+      CHANGE_IMG_DATA: (state, { payload: { data, idDrop } }) => {
+        const listImmutable = List(state.initImageState);
+        const { imageSpread, indexPage } = getIndexSpreadAndSpreadData(state);
+        // check 2 case :
+        // TH1 : drop img to gallery ===> add param idDrop object
+        // TH2  : use for rotate, ,flipVertical and every data in img , (no add param idDrop, only add data obj )
+        const newImageSpead = imageSpread.assets.map(item => {
+          if (
+            item.idElement === idDrop ||
+            (!idDrop &&
+              state.selected.some(
+                select => select.idElement === item.idElement,
+              ))
+          ) {
+            item = { ...item, ...data };
+          }
+          return item;
+        });
+        const changeArray = listImmutable.setIn(
+          [indexPage, 'assets'],
+          newImageSpead,
+        );
+        return { ...state, ...{ initImageState: changeArray.toArray() } };
+      },
+      CHANGE_GALLERY: (state, { payload: gallery }) => {
+        return { ...state, ...{ gallery } };
+      },
+      RE_LAYOUT: (state, { payload: data }) => {
+        const listImmutable = List(state.initImageState);
+        const { indexPage } = getIndexSpreadAndSpreadData(state);
+        const { assets } = data;
+
+        const newSpead = assets.map(newAsset => {
+          // uniqueId is id pic in server
+          // map data old =>
+          //2 => 3
+          // console.log('newAsset',newAsset)
+          return {
+            ...newAsset,
+            ...{
+              src:
+                config.BASE_URL +
+                'u-q7gj6ScmFeiCH4sYGqEY4A/gallery/' +
+                newAsset.uniqueId,
+              idElement: uuid(),
+            },
+          };
+        });
+        const newIdPage = uuid();
+        let currentSpread = state.spread;
+        if (currentSpread === listImmutable.getIn([indexPage, 'idPage'])) {
+          currentSpread = newIdPage;
+        }
+        const changeArray = listImmutable
+          .setIn([indexPage, 'assets'], newSpead)
+          .setIn([indexPage, 'idPage'], newIdPage);
+        localStorage.setItem(
+          'pwa-store',
+          JSON.stringify({
+            initImageState: changeArray.toArray(),
+          }),
+        );
         return {
-          ...asset,
-          ...{
-            src:oldData ? oldData.src :
-              config.BASE_URL +
-              'u-ojiNLBbWbrP1dkzg2gVXYD/gallery/' +
-              asset.uniqueId,
-            idElement: uuid(),
-          },
+          ...state,
+          ...{ initImageState: changeArray.toArray(), selected: [] },
+          spread: currentSpread,
         };
-      });
-      console.log('datatest', datatest);
-      const changeArray = listImmutable.setIn([indexPage, 'assets'], datatest);
-      return {
-        ...state,
-        ...{ initImageState: changeArray.toArray(), selected: [] },
-      };
-    },
-    DELETE_IMG: (state, { payload: id }) => {
-      const listIdDelete = id
-        ? [id]
-        : state.selected.map(select => select.idElement);
-      const listImmutable = List(state.initImageState);
-      const { imageSpread, indexPage } = getIndexSpreadAndSpreadData(state);
-      const deletedList = imageSpread.assets.map(item => {
-        if (listIdDelete.includes(item.idElement)) {
-          item.croprect = {};
-          item.src = '';
-        }
-        return item;
-      });
-      const changeArray = listImmutable.setIn(
-        [indexPage, 'assets'],
-        deletedList,
-      );
-      return { ...state, ...{ initImageState: changeArray.toArray() } };
-    },
-    CHANGE_SPREAD: (state, { payload: spread }) => {
-      return { ...state, ...{ spread } };
-    },
-    REORDER_SPREAD: (state, { payload }) => {
-      const { oldIndex, newIndex } = payload;
-      return {
-        ...state,
-        initImageState: arrayMove(state.initImageState, oldIndex, newIndex),
-      };
-    },
-    REMOVE_SPREAD: (state, { payload }) => {
-      const { index } = payload;
-      return {
-        ...state,
-        initImageState: state.initImageState.filter((a, i) => i !== index),
-      };
+      },
+      DELETE_IMG: state => {
+        const listIdDelete = state.selected.map(select => select.idElement);
+        const listImmutable = List(state.initImageState);
+        const { imageSpread, indexPage } = getIndexSpreadAndSpreadData(state);
+        const deletedList = imageSpread.assets.filter(
+          item => !listIdDelete.includes(item.idElement),
+        );
+        const changeArray = listImmutable.setIn(
+          [indexPage, 'assets'],
+          deletedList,
+        );
+        return { ...state, ...{ initImageState: changeArray.toArray() } };
+      },
+      CHANGE_SPREAD: (state, { payload: spread }) => {
+        return { ...state, ...{ spread, selected: [] } };
+      },
+      REORDER_SPREAD: (state, { payload }) => {
+        const { oldIndex, newIndex } = payload;
+        return {
+          ...state,
+          initImageState: arrayMove(state.initImageState, oldIndex, newIndex),
+        };
+      },
+      REMOVE_SPREAD: (state, { payload }) => {
+        const { index } = payload;
+        const isCurrentSpread =
+          state.initImageState[index].idPage === state.spread;
+        console.log(isCurrentSpread);
+        const newBook = state.initImageState.filter((a, i) => i !== index);
+        console.log(newBook[index]);
+        return {
+          ...state,
+          initImageState: newBook,
+          spread: isCurrentSpread ? newBook[index].idPage : state.spread,
+          selected: [],
+        };
+      },
+      SELECT_IMAGE_FROM_GALLERY: (state, { payload }) => {
+        return {
+          ...state,
+          gallerySelected: payload || [],
+        };
+      },
     },
   },
   INITIAL_STATE,
 );
 
-export default ReduxUndo(imageStoreReduce, {
-  filter: excludeAction(['INIT_DATA', '']),
-  limit: 25,
+export default undoable(imageStoreReduce, {
+  actionExclude: [
+    String(imageStoreAction.image.setSelected),
+    String(imageStoreAction.image.changeSpread),
+    String(imageStoreAction.image.deleteImg),
+    String(imageStoreAction.image.selectImageFromGallery),
+  ],
+  initAction: String(imageStoreAction.image.initData),
+  limit: 100,
+  useDiff: true,
 });

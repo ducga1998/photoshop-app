@@ -5,11 +5,17 @@ import { createAction } from 'redux-actions';
 import ImageCore from './ImageCore';
 import { STATE_DRAGGING } from '../../helpers/utils';
 import authorizedRequest from '../../helpers/request/authorizedRequest';
+import { toast } from 'react-toastify';
+import { fabric } from 'fabric';
+import imageStoreAction from '../../store/imageStore/actions';
 
 export const mapStore = new Map();
 if (process.browser) {
   window['mapStore'] = mapStore;
 }
+fabric.textureSize = 4096;
+fabric.filterBackend = fabric.initFilterBackend();
+
 class ImageView extends React.Component {
   constructor(props) {
     super(props);
@@ -25,7 +31,6 @@ class ImageView extends React.Component {
     if (!target) {
       return;
     }
-    console.log('state', STATE_DRAGGING.src);
     const typeElement = target.getAttribute('data-element');
     if (typeElement.includes('-overlay') && STATE_DRAGGING.src.length === 0)
       return;
@@ -39,27 +44,28 @@ class ImageView extends React.Component {
     });
   };
   relayout = async positionDrop => {
-    console.log('STATE_DRAGGING.src', STATE_DRAGGING.src);
     const data = {
       assets: [
         ...this.props.spreadDataSelected.assets,
-        ...[
-          {
-            new: true,
-            uniqueId: STATE_DRAGGING.src.split('/').pop(),
-          },
-        ],
+        ...this.props.gallerySelected.map(i => ({
+          new: true,
+          uniqueId: i,
+        })),
       ],
       leftLayoutIndex: 0,
       pagespreadIndex: 1,
       rightLayoutIndex: 0,
     };
     const result = await authorizedRequest.put(
-      'https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/relayout/p-pFWrCqq5jmARDeuSLxaP8s/spread/' +
+      `https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/relayout/p-7ubVMK7eak6da3MwH7vz5X/spread/` +
         positionDrop,
       data,
     );
-
+    if (result && Object.keys(result).length === 0) {
+      console.log('hhh');
+      toast.error('Maximum in layout');
+      return;
+    }
     await this.props.relayout({ ...result, ...{ positionDrop } });
     // console.log('csancjknasc', result);
     STATE_DRAGGING.clear();
@@ -79,13 +85,12 @@ class ImageView extends React.Component {
       if (idDrop === 'left-overlay') {
         console.log('drop to left overlay ');
         this.relayout('left');
-
         return;
       }
+
       if (idDrop === 'right-overlay') {
         console.log('drop t right overlay');
         this.relayout('right');
-
         return;
       }
 
@@ -102,6 +107,9 @@ class ImageView extends React.Component {
 
     this.props.swapImageData({ idDrapStart, idDrop });
   };
+  handleDragLeave = e => {
+    this.refOverlay.style.display = 'none';
+  };
   handleOnMouseDown = e => {
     const target = e.target.closest('[data-element]');
     if (!target) {
@@ -110,17 +118,18 @@ class ImageView extends React.Component {
     const idElement = target.getAttribute('data-element');
     const { selected } = this.props;
     const kcanvas = mapStore.get(idElement);
-    if ((kcanvas && !kcanvas._objects.length) || !kcanvas) {
-      console.log('no have item object in kclass');
-      return;
-    }
-    const kImage = kcanvas.item(0);
+    window.selected = kcanvas;
+    // if ((kcanvas && !kcanvas._objects.length) || !kcanvas) {
+    //   console.log('no have item object in kclass');
+    //   return;
+    // }
+    // const kImage = kcanvas.item(0);
 
     this.props.setSelect([{ idElement }]);
-    window.selected = kcanvas;
-    if (!kImage) return;
+
+    // if (!kImage) return;
     // const src = kImage.getSrc();
-    // const angle = kImage.angle;
+    // const rotate = kImage.angle;
 
     // muti select
     if (e.metaKey || e.ctrlKey) {
@@ -140,6 +149,9 @@ class ImageView extends React.Component {
     e.dataTransfer.setData('text/plain', id);
     STATE_DRAGGING.idDragging = id;
   };
+
+  componentDidMount() {}
+
   render() {
     const {
       frameWidth,
@@ -151,9 +163,10 @@ class ImageView extends React.Component {
     if (!spreadDataSelected) return null;
     return (
       <Wrapper
-        draggable
+        // draggable
         onDragOverCapture={this.handleDragOver}
-        onMouseUpCapture={this.handleOnMouseDown}
+        onDragLeave={this.handleDragLeave}
+        onClick={this.handleOnMouseDown}
         onDragEndCapture={this.handleDrop}
         onDragStartCapture={this.handleDragStart}
         onDropCapture={this.handleDrop}>
@@ -162,7 +175,7 @@ class ImageView extends React.Component {
             if (!item || !item.targetrect) return null;
             return (
               <ImageCore
-                key={item.idElement}
+                key={key}
                 item={item}
                 frameWidth={frameWidth}
                 frameHeight={frameHeight}
@@ -203,6 +216,7 @@ const WrapperCanvas = styled.div`
 const mapStateToProps = state => ({
   initImageState: state.imageStore.present.initImageState,
   selected: state.imageStore.present.selected,
+  gallerySelected: state.imageStore.present.gallerySelected,
   spreadDataSelected: (() => {
     const { initImageState } = state.imageStore.present;
     return (
@@ -213,10 +227,10 @@ const mapStateToProps = state => ({
   })(),
 });
 const mapDispatchToProps = dispatch => ({
-  relayout: data => dispatch(createAction('RE_LAYOUT')(data)),
-  setSelect: id => dispatch(createAction('SET_SELECTED')(id)),
-  changeImageData: obj => dispatch(createAction('CHANGE_IMG_DATA')(obj)),
-  swapImageData: id => dispatch(createAction('SWAP_IMG')(id)),
+  relayout: data => dispatch(imageStoreAction.image.reLayout(data)),
+  setSelect: id => dispatch(imageStoreAction.image.setSelected(id)),
+  changeImageData: obj => dispatch(imageStoreAction.image.changeImgData(obj)),
+  swapImageData: id => dispatch(imageStoreAction.image.swapImg(id)),
   deleteImage: id => {
     return dispatch(createAction('DELETE_IMG')(id));
   },

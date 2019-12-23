@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ImageView from '../components/images/ImageView';
+import ImageView from '../components/Images/ImageView';
 import Frame from '../components/frame/Frame';
 import { connect } from 'react-redux';
 

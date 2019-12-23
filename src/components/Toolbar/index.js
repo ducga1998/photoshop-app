@@ -1,17 +1,26 @@
 import * as React from 'react';
+// import { findDOMNode } from 'react-dom';
 import styled from 'styled-components';
-import { mapStore } from '../images/ImageView';
-import { fabric } from 'fabric';
+import { mapStore } from '../Images/ImageView';
+// import { fabric } from 'fabric';
 import Delete from '../../static/img/ic_core/Delete.component.svg';
 import Rotate from '../../static/img/ic_core/Rotate.component.svg';
 import Filter from '../../static/img/ic_core/Filter.component.svg';
 import Flip from '../../static/img/ic_core/Flip.component.svg';
+import {
+  convertPxToProportion,
+  STATE_DRAGGING,
+  translateOnFlip,
+  translateOnRotate,
+} from '../../helpers/utils';
+import authorizedRequest from '../../helpers/request/authorizedRequest';
+import { toast } from 'react-toastify';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import _ from 'lodash';
+import imageStoreAction from '../../store/imageStore/actions';
 
-if (process.browser) {
-  var webglBackend = new fabric.WebglFilterBackend();
-}
-const f = fabric.Image.filters;
-fabric.filterBackend = webglBackend;
+// fabric.filterBackend = webglBackend;
 
 // new f.Brownie()
 class Toolbar extends React.Component {
@@ -23,74 +32,147 @@ class Toolbar extends React.Component {
     };
   }
 
-  applyFilter = (index, filter) => {
-    const { idElement } = this.props.selected;
-    const kclassCanvas = mapStore.get(idElement);
-    console.log('kclassCanvas', kclassCanvas);
-    const obj = kclassCanvas.item(0);
-    obj.filters.push(filter);
-    obj.applyFilters();
-  };
+  componentDidMount() {}
+
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   if (prevProps.selected !== this.props.selected) {
+  //     if (this.props.selected && this.props.selected.length > 0) {
+  //       this.addBackDrop();
+  //     } else {
+  //       this.removeBackDrop();
+  //     }
+  //   }
+  // }
+  //
+  // onClickBackDrop = (e) => {
+  //   const dom = findDOMNode(this);
+  //   console.log(dom);
+  //   if (dom === e.target ? false : dom.contains(e.target)) {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //     this.props.setSelect([]);
+  //   }
+  // };
+  //
+  // addBackDrop() {
+  //   document.addEventListener('click', this.onClickBackDrop);
+  // }
+  //
+  // removeBackDrop() {
+  //   document.removeEventListener('click', this.onClickBackDrop);
+  // }
+
   getKclass = () => {
     const { selected } = this.props;
     if (!selected.length) return {};
     return selected.map(select => {
       const kclassCanvas = mapStore.get(select.idElement);
       const kclassImage = kclassCanvas.item(0);
-      console.log('{ kclassCanvas, kclassImage, angle: select.angle }', {
-        kclassCanvas,
-        kclassImage,
-        angle: select.angle,
-      });
-      return { kclassCanvas, kclassImage, angle: select.angle };
+      return { kclassCanvas, kclassImage };
     });
   };
 
   flipImage = () => {
-    const arrKclass = this.getKclass();
-    arrKclass.map(({ kclassImage, kclassCanvas }) => {
-      if (
-        kclassImage.orientation &&
-        [5, 6, 7, 8].includes(kclassImage.orientation)
-      ) {
-        this.props.changeImageData({
-          data: {
-            flipY: !kclassImage.flipY,
-          },
-        });
-      } else {
-        this.props.changeImageData({
-          data: { flipX: !kclassImage.flipX },
-        });
-      }
-      kclassCanvas.renderAll();
-      return null;
-      // });
-    });
-  };
-  rotateImage = () => {
-    const arrKclass = this.getKclass();
-    arrKclass.map(({ kclassImage }) => {
-      let angle = kclassImage.angle;
-      angle = angle + 90;
+    if (Array.isArray(this.props.selectedAssets)) {
+      const changeData = this.props.selectedAssets.map(selectedItem => {
+        const canvasItem = mapStore.get(selectedItem.idElement);
+        const kclassImage = canvasItem.item(0);
+        const options = translateOnFlip(selectedItem, kclassImage, canvasItem);
+        const objectClass = {
+          ..._.pick(kclassImage, [
+            'top',
+            'left',
+            'orientation',
+            'scaleX',
+            'scaleY',
+            'width',
+            'height',
+          ]),
+          ...options,
+        };
+        const croprect = convertPxToProportion(objectClass, canvasItem);
 
-      if (angle >= 360) {
-        angle = angle - 360;
-      }
-      this.props.changeImageData({ data: { angle } });
-      return null;
-    });
-  };
-  handleFilterColor = filterColor => {
-    if (filterColor === 'Brownie') {
-      this.setState({ selectedColor: filterColor });
-      this.applyFilter(4, new f.Brownie());
+        if (kclassImage.angle === 90 || kclassImage.angle === 270) {
+          return {
+            flipVertical: selectedItem.flipVertical
+              ? !selectedItem.flipVertical
+              : true,
+            idElement: selectedItem.idElement,
+            croprect,
+          };
+        } else {
+          return {
+            flipHorizontal: selectedItem.flipHorizontal
+              ? !selectedItem.flipHorizontal
+              : true,
+            idElement: selectedItem.idElement,
+            croprect,
+          };
+        }
+      });
+      this.props.changeListImageData(changeData);
     }
   };
-  deleteImage = () => {
-    this.props.changeImageData({
-      data: { src: '' }
-    });
+  rotateImage = () => {
+    if (Array.isArray(this.props.selectedAssets)) {
+      const changeData = this.props.selectedAssets.map(selectedItem => {
+        const canvasItem = mapStore.get(selectedItem.idElement);
+        const kclassImage = canvasItem.item(0);
+        let rotate = selectedItem.rotate || 0;
+        rotate = rotate - 90;
+        if (rotate < 0) {
+          rotate = 270;
+        }
+        const options = translateOnRotate(
+          selectedItem,
+          kclassImage,
+          canvasItem,
+          rotate,
+        );
+        const objectClass = {
+          ..._.pick(kclassImage, [
+            'top',
+            'left',
+            'orientation',
+            'scaleX',
+            'scaleY',
+            'width',
+            'height',
+          ]),
+          ...options,
+        };
+        const croprect = convertPxToProportion(objectClass, canvasItem);
+        return {
+          idElement: selectedItem.idElement,
+          rotate,
+          croprect,
+        };
+      });
+      this.props.changeListImageData(changeData);
+    }
+  };
+  handleFilterColor = filterColor => {
+    this.props.changeImageData({ data: { filterColor } });
+  };
+  deleteImage = async () => {
+    await this.props.deleteImg();
+    const data = {
+      assets: this.props.spreadDataSelected.assets,
+      leftLayoutIndex: 0,
+      pagespreadIndex: 1,
+      rightLayoutIndex: 0,
+    };
+    const result = await authorizedRequest.put(
+      `https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/relayout/p-7ubVMK7eak6da3MwH7vz5X/spread/` +
+        'left',
+      data,
+    );
+    if (result && Object.keys(result).length === 0) {
+      toast.error('Maximum in layout');
+      return;
+    }
+    await this.props.relayout(result);
+    STATE_DRAGGING.clear();
   };
 
   render() {
@@ -98,7 +180,7 @@ class Toolbar extends React.Component {
     if (!this.props.selected && !this.props.selected.length) {
       return null;
     }
-    const { selected } = this.props;
+    const { selected, selectedAssets } = this.props;
     if (selected && !selected.length) return;
     const rect = selected.reduce(
       (init, next, currentIndex, intArr) => {
@@ -117,13 +199,16 @@ class Toolbar extends React.Component {
       { top: 0, left: 0, widthWraper: 0, heightWraper: 0 },
     );
     if (!rect.top) return null;
-    // console.log('rect', rect);
+    const activeFilterColor =
+      selectedAssets.length && selectedAssets[0].filterColor
+        ? selectedAssets[0].filterColor
+        : '';
     return (
       <Wrapper {...rect} data-outside="toolbar">
-        <TooggleButton stroke onClick={this.flipImage}>
+        <TooggleButton stroke={'true'} onClick={this.flipImage}>
           Flip <Flip />{' '}
         </TooggleButton>
-        <TooggleButton invert stroke onClick={this.rotateImage}>
+        <TooggleButton invert stroke={'true'} onClick={this.rotateImage}>
           Rotate <Rotate />
         </TooggleButton>
         <TooggleButton
@@ -134,26 +219,28 @@ class Toolbar extends React.Component {
           Color Filter
           <Filter />
         </TooggleButton>
-        <TooggleButton stroke onClick={this.deleteImage}>
+        <TooggleButton stroke={'true'} onClick={this.deleteImage}>
           Delete <Delete />
         </TooggleButton>
         {openFilter && (
-          <WrapperColorFilter>
+          <WrapperColorFilter
+            data-test={rect.top + 90 + 65 + rect.heightWraper}
+            isTop={rect.top + 90 + 65 + rect.heightWraper < window.innerHeight}>
             {[
-              'Sepia',
-              'Black/White',
-              'Brownie',
-              'Vintage',
-              'Kodachrome',
-              'Technicolor',
-              'Polaroid',
-              'Remove Color',
-            ].map((styleFilter, key) => {
+              { name: 'Normal', value: '' },
+              { name: 'Sepia', value: 'Sepia' },
+              { name: 'BlackWhite', value: 'BlackWhite' },
+              { name: 'Brownie', value: 'Brownie' },
+              { name: 'Vintage', value: 'Vintage' },
+              { name: 'Kodachrome', value: 'Kodachrome' },
+              { name: 'Technicolor', value: 'Technicolor' },
+            ].map((itemFilter, key) => {
               return (
                 <ToggleFilter
+                  active={activeFilterColor === itemFilter.value}
                   key={key}
-                  onClick={() => this.handleFilterColor(styleFilter)}>
-                  {styleFilter}
+                  onClick={() => this.handleFilterColor(itemFilter.value)}>
+                  {itemFilter.name}
                 </ToggleFilter>
               );
             })}
@@ -164,7 +251,46 @@ class Toolbar extends React.Component {
   }
 }
 
-export default Toolbar;
+const getSelectedSpread = state => state.imageStore.present.spread;
+
+const getSelectedAssets = state => state.imageStore.present.selected;
+
+const getImageState = state => state.imageStore.present.initImageState;
+
+const getCurrentSelected = createSelector(
+  [getSelectedSpread, getSelectedAssets, getImageState],
+  (selectedSpread, selectedAssets, imageState) => {
+    const currentSpread =
+      imageState &&
+      (imageState.find(item => item.idPage === selectedSpread) ||
+        imageState[0]);
+    const currentAssets = selectedAssets
+      .map(i => {
+        return currentSpread.assets.find(
+          item => item.idElement === i.idElement,
+        );
+      })
+      .filter(i => i);
+    return currentAssets;
+  },
+);
+
+const mapStateToProps = state => {
+  return {
+    selectedAssets: getCurrentSelected(state),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  dispatch => {
+    return {
+      changeListImageData: arr =>
+        dispatch(imageStoreAction.image.changeListImgData(arr)),
+      setSelect: id => dispatch(imageStoreAction.image.setSelected(id)),
+    };
+  },
+)(Toolbar);
 const WrapperColorFilter = styled.div`
   width: 450px;
   background: #828282;
@@ -172,7 +298,8 @@ const WrapperColorFilter = styled.div`
   border-radius: 6px;
   position: absolute;
   display: flex;
-  top: 110px;
+  z-index: 1;
+  top: ${props => (props.isTop ? '90px' : '-90px')};
   transform: translateX(-10%);
 `;
 const ToggleFilter = styled.div`
@@ -181,12 +308,14 @@ const ToggleFilter = styled.div`
   background: #e0e0e0;
   margin: 9px;
   font-size: 8px;
-  color: #828282;
+  color: ${props => (props.active ? 'white' : '#828282')};
+  background: ${props => (props.active ? '#b06ab3' : '')};
 `;
 const Wrapper = styled.div`
   position: fixed;
   background: #494b4d;
   display: flex;
+  z-index: 2;
   border-radius: 6px;
   top: ${props => (props.top ? props.top + props.heightWraper + 'px' : '0px')};
   left: ${props =>
@@ -197,9 +326,12 @@ const TooggleButton = styled.div`
   display: flex;
   align-content: center;
   justify-content: left;
-  padding: 15px;
+  padding: 10px;
   //background  : black;
   color: ${props => (props.active ? '#b06ab3' : 'white')};
+  path {
+      fill: ${props => (props.active ? '#b06ab3' : '')};
+    }
   margin: auto;
   cursor: pointer;
   &:hover {
@@ -211,10 +343,11 @@ const TooggleButton = styled.div`
       stroke: #b06ab3;
     }
   }
+  
   svg {
     height: 40px;
     margin: auto;
-    transform: ${props => (props.invert ? 'scaleX(-1)' : '')};
+    // transform: ${props => (props.invert ? 'scaleX(-1)' : '')};
   }
   flex-direction: column-reverse;
   text-align: center;

@@ -10,8 +10,8 @@ import TriangleInactiveIcon from '../../static/img/ic_book_spreads/ic_triangle/i
 import { connect, useSelector } from 'react-redux';
 import Frame from '../frame/Frame';
 import { convertProportionToPx } from '../../helpers/utils';
-import ImageCore2 from '../images/ImageCore2';
-import imageCropAction from '../../store/ImageStore/actions';
+import ImageCorePreview from '../Images/ImageCorePreview';
+import imageCropAction from '../../store/imageStore/actions';
 
 const Container = styled.div`
   position: relative;
@@ -150,16 +150,20 @@ const ButtonBackIcon = styled.img`
 
 const SortableItem = SortableElement(
   ({ item, setSpread, style, key, _index, removeSpread }) => {
-    const spread = useSelector(store => store.imageStore.spread);
+    const spread = useSelector(
+      store =>
+        store.imageStore.present.spread ||
+        store.imageStore.present.initImageState[0].idPage,
+    );
     return (
-      <Book
-        key={key}
-        style={style}
-        onClick={() => {
-          setSpread(item);
-        }}>
-        <CoverContainer key={item.id} selected={item.idPage === spread}>
-          <Frame data={{ frameSize: { width: 220, height: 120 } }}>
+      <Book key={item.idPage} style={style}>
+        <CoverContainer
+          key={item.id}
+          selected={item.idPage === spread}
+          onClick={() => {
+            setSpread(item);
+          }}>
+          <Frame data={{ frameSize: { width: 220, height: 110 } }}>
             {({ width, height }) => {
               return item.assets.map((item, index) => {
                 const { targetrect } = item;
@@ -168,7 +172,7 @@ const SortableItem = SortableElement(
                   frameHeight: height,
                 });
                 return (
-                  <ImageCore2
+                  <ImageCorePreview
                     key={item.idElement}
                     item={item}
                     rect={rect}
@@ -181,7 +185,11 @@ const SortableItem = SortableElement(
         </CoverContainer>
         <BookOption>
           <span>{_index * 2 || ''}</span>
-          <ButtonDelete onClick={() => removeSpread(_index)}>
+          <ButtonDelete
+            onClick={e => {
+              e.stopPropagation();
+              removeSpread(_index);
+            }}>
             <ButtonDeleteIcon src={TrashIcon} alt={''} />
           </ButtonDelete>
           <span>{_index * 2 + 1 || ''}</span>
@@ -200,7 +208,7 @@ const SortableList = SortableContainer(
       <List
         height={height}
         rowCount={image.length}
-        rowHeight={225}
+        rowHeight={215}
         rowRenderer={renderRow}
         width={width}
         style={{ outline: 'none' }}
@@ -224,11 +232,12 @@ function BookSpreads({
       return (
         <SortableItem
           index={index}
+          _index={index}
           item={item}
           style={style}
           setSpread={setSpread}
           removeSpread={removeSpread}
-          key={key}
+          key={item.idPage}
         />
       );
     },
@@ -284,8 +293,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     changeOrderSpread: (oldIndex, newIndex) =>
-      dispatch(imageCropAction.reorderSpread({ oldIndex, newIndex })),
-    removeSpread: index => dispatch(imageCropAction.removeSpread({ index })),
+      dispatch(imageCropAction.image.reorderSpread({ oldIndex, newIndex })),
+    removeSpread: index =>
+      dispatch(imageCropAction.image.removeSpread({ index })),
   };
 };
 

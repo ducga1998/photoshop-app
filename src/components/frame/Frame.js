@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-
-import { createAction } from 'redux-actions';
 import Toolbar from '../Toolbar';
 import styled from 'styled-components';
+import imageStoreAction from '../../store/imageStore/actions';
 class Frame extends React.PureComponent {
   static defaultProps = {
     data: {
@@ -15,14 +14,11 @@ class Frame extends React.PureComponent {
   };
   state = {};
   refFrame = null;
-  componentDidMount = () => {
-    if (this.refFrame) {
-      window.addEventListener('resize', () => {});
-    }
-  };
+  componentDidMount = () => {};
 
   render() {
     const { frameSize } = this.props.data;
+
     return (
       <WrapperFrame ref={e => (this.refFrame = e)}>
         <div
@@ -34,14 +30,11 @@ class Frame extends React.PureComponent {
             width: frameSize.width,
             position: 'relative',
             background: '#fff',
+            overflow: 'hidden',
           }}>
           {this.props.children({ ...frameSize })}
           {this.props.selected && this.props.selected.length > 0 && (
-            <Toolbar
-              selected={this.props.selected}
-              changeImageData={this.props.changeImageData}
-              deleteImg={this.props.deleteImg}
-            />
+            <Toolbar {...this.props} />
           )}
         </div>
       </WrapperFrame>
@@ -58,12 +51,22 @@ const mapStateToProps = state => ({
   selected: state.imageStore.present.selected,
   dataInit: state.imageStore.present.initImageState,
   spread: state.imageStore.present.spread,
+
+  spreadDataSelected: (() => {
+    const { initImageState } = state.imageStore.present;
+    return (
+      initImageState.find(
+        spreadItem => spreadItem.idPage === state.imageStore.present.spread,
+      ) || initImageState[0]
+    );
+  })(),
 });
 const mapDispatchToProps = dispatch => ({
-  changeImageData: obj => dispatch(createAction('CHANGE_IMG_DATA')(obj)),
+  changeImageData: obj => dispatch(imageStoreAction.image.changeImgData(obj)),
   deleteImg: () => {
-    dispatch(createAction('DELETE_IMG')());
+    dispatch(imageStoreAction.image.deleteImg());
   },
+  relayout: data => dispatch(imageStoreAction.image.reLayout(data)),
 });
 export default connect(
   mapStateToProps,

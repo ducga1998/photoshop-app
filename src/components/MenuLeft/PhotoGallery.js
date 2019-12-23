@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useCallback, useMemo } from 'react';
+import styled, { css } from 'styled-components';
 
 import Switch from '../UI/Switch/Switch';
 import ArrowBackIcon from '../../static/img/ic_menu_left/ic_arrow_back/ic_arrow_back.svg';
@@ -7,9 +7,20 @@ import PhotoIcon from '../../static/img/ic_photo_gallery/ic_photo/ic_photo.svg';
 // import BigPhotoIcon from '../../static/img/ic_menu_left/ic_photo/ic_photo_inactive.svg';
 import ColorWandIcon from '../../static/img/ic_photo_gallery/ic_color_wand/ic_color_wand.svg';
 import BackgroundIcon from '../../static/img/ic_photo_gallery/ic_background/ic_background.svg';
-import { STATE_DRAGGING } from '../../helpers/utils';
+import SelectedIcon from '../../static/img/ic_photo_gallery/ic_selected_gallery/ic_selected_gallery.svg';
+import { convertProportionToPx, STATE_DRAGGING } from '../../helpers/utils';
 import config from '../../config';
 import { connect } from 'react-redux';
+import authorizedRequest from '../../helpers/request/authorizedRequest';
+import axios from 'axios';
+import LazyLoad from 'react-lazyload';
+import { toast } from 'react-toastify';
+import imageStoreAction from '../../store/imageStore/actions';
+import ImageCorePreview from '../Images/ImageCorePreview';
+import Frame from '../frame/Frame';
+import { createSelector } from 'reselect';
+import _ from 'lodash';
+
 const Container = styled.div`
   position: relative;
   width: ${props => (props.show ? 300 : 0)}px;
@@ -109,9 +120,6 @@ const PhotosWrapper = styled.div`
     background: #bdbdbd;
     border-radius: 8px;
   }
-`;
-
-const Photos = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -120,29 +128,45 @@ const Photos = styled.div`
 
 const BorderPhoto = styled.div`
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  width: 94px;
+  height: 94px;
   margin-bottom: 15px;
   border-radius: 4px;
-  border: solid 3px transparent;
   cursor: pointer;
   overflow: hidden;
-  &:hover {
-    border: solid 3px #494b4d;
+  transition: all 300ms ease-in-out;
+  padding: 3px;
+  border: 2px solid #e0e0e0;
+  .selectedIcon {
+    ${props =>
+      props.selected
+        ? css`
+            display: block;
+          `
+        : css`
+            display: none;
+          `}
   }
+  ${props =>
+    props.dragging && props.selected
+      ? css`
+          transform: scale(0.75);
+          border: solid 2px #494b4d;
+          & > div {
+            opacity: 0.8;
+          }
+        `
+      : ''}
 `;
 
-const Photo = styled.img`
-  pointer-events: none;
-  width: 100px;
-  height: 100px;
-  border: solid 1px #e0e0e0;
-  cursor: pointer;
-  ${BorderPhoto}:hover & {
-    border: solid 1px transparent;
-  }
+const SelectedGallery = styled.img`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 9;
 `;
 
 const ButtonBack = styled.div`
@@ -170,18 +194,84 @@ const ButtonBack = styled.div`
 const ButtonBackIcon = styled.img`
   height: 15px;
 `;
-const projectID = 'u-ojiNLBbWbrP1dkzg2gVXYD/gallery/';
-function PhotoGallery({ show, hidden, gallery }) {
+const userID = 'u-q7gj6ScmFeiCH4sYGqEY4A/gallery/';
+
+function PhotoGallery({
+  show,
+  hidden,
+  gallery,
+  changeGallery,
+  gallerySelected,
+  selectedImageFromGallery,
+  usedPhoto,
+}) {
   const [sort, setSort] = useState(true);
-  const handleDrapStart = event => {
+  const [dragging, setDragging] = useState(false);
+  const [hideUsed, setHideUsed] = useState(false);
+  const handleDrapStart = (event, idSrc) => {
+    setDragging(true);
+    if (gallerySelected.indexOf(idSrc) > -1) {
+      // drag all
+    } else {
+      selectedImageFromGallery([idSrc]);
+    }
     const target = event.target;
     if (!target) return;
     const src = target.getAttribute('data-src');
     STATE_DRAGGING.src = src;
   };
-  function onChangeHandler(e) {
-    console.log('e.target', e.target.files[0]);
+
+  async function onChangeHandler(e) {
+    const file = e.target.files[0];
+    const { name: nameFile } = e.target.files[0];
+    const objectUpload = await authorizedRequest.put(
+      'https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/upload/project/p-7ubVMK7eak6da3MwH7vz5X/sign',
+      {
+        files: [nameFile],
+      },
+    );
+    const linkUpLoad = Object.values(objectUpload)[0].signedUrl;
+    await axios.put(linkUpLoad, file, {
+      headers: {
+        'Content-Type': 'image/png',
+      },
+    });
+    const { files } = await authorizedRequest.put(
+      'https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/upload/project/p-7ubVMK7eak6da3MwH7vz5X/mark',
+    );
+    if (files && files.length) {
+      toast.success('Import success');
+    }
+    changeGallery(files);
+    // console.log("files",files)
   }
+
+  const setSelected = useCallback(
+    (e, item) => {
+      if (e.metaKey) {
+        if (gallerySelected.find(i => i === item)) {
+          selectedImageFromGallery(gallerySelected.filter(i => i !== item));
+        } else {
+          selectedImageFromGallery([...gallerySelected, item]);
+        }
+      } else {
+        if (gallerySelected.length === 1 && gallerySelected[0] === item) {
+          selectedImageFromGallery([]);
+        } else {
+          selectedImageFromGallery([item]);
+        }
+      }
+    },
+    [gallerySelected, selectedImageFromGallery],
+  );
+
+  const filteredGallery = useMemo(() => {
+    if (!hideUsed) {
+      return gallery;
+    } else {
+      return gallery.filter(i => usedPhoto.indexOf(i) === -1);
+    }
+  }, [hideUsed, gallery, usedPhoto]);
 
   return (
     <Container show={show}>
@@ -213,7 +303,10 @@ function PhotoGallery({ show, hidden, gallery }) {
           </Button>
           <SwitchGroup>
             <span>Show my used photos</span>
-            <Switch />
+            <Switch
+              value={hideUsed}
+              onChange={() => setHideUsed(prev => !prev)}
+            />
           </SwitchGroup>
         </ButtonGroup>
         <PhotoGroup>
@@ -221,21 +314,57 @@ function PhotoGallery({ show, hidden, gallery }) {
             Sort by
             <p>▲</p>
           </Sort>
-          <PhotosWrapper>
-            <Photos>
-              {gallery.map(idSrc => {
-                const src = config.BASE_URL + projectID + idSrc;
+          <PhotosWrapper id={'photo-wrapper'}>
+            {show &&
+              filteredGallery.map((idSrc, key) => {
+                const src = config.BASE_URL + userID + idSrc;
                 return (
-                  <BorderPhoto
-                    data-src={src}
-                    onDragStart={handleDrapStart}
-                    draggable
-                    key={idSrc}>
-                    <Photo src={src} alt={''} />
-                  </BorderPhoto>
+                  <LazyLoad
+                    key={idSrc}
+                    scrollContainer={'#photo-wrapper'}
+                    height={61}>
+                    <BorderPhoto
+                      data-src={src}
+                      selected={gallerySelected.find(i => i === idSrc)}
+                      dragging={dragging}
+                      onDragStart={e => handleDrapStart(e, idSrc)}
+                      onDragEnd={() => setDragging(false)}
+                      onClick={e => setSelected(e, idSrc)}
+                      draggable
+                      key={idSrc}>
+                      <SelectedGallery
+                        src={SelectedIcon}
+                        className={'selectedIcon'}
+                      />
+                      <Frame data={{ frameSize: { width: 94, height: 94 } }}>
+                        {({ width, height }) => {
+                          const targetrect = {
+                            x: 0,
+                            y: 0,
+                            width: 1,
+                            height: 1,
+                          };
+                          const rect = convertProportionToPx(targetrect, {
+                            frameWidth: width,
+                            frameHeight: height,
+                          });
+                          return (
+                            <ImageCorePreview
+                              editable={false}
+                              rect={rect}
+                              item={{
+                                src: src,
+                                idElement: 'gallery' + src,
+                              }}
+                            />
+                          );
+                        }}
+                      </Frame>
+                      {/*<Photo src={src} crossOrigin={'anonymous'} />*/}
+                    </BorderPhoto>
+                  </LazyLoad>
                 );
               })}
-            </Photos>
           </PhotosWrapper>
         </PhotoGroup>
       </ElementGroup>
@@ -243,6 +372,28 @@ function PhotoGallery({ show, hidden, gallery }) {
   );
 }
 
-export default connect(state => ({
+const usedPhotoSelector = createSelector(
+  [state => state.imageStore.present.initImageState],
+  item =>
+    item.reduce((acc, item) => {
+      return _.uniq([...acc, ...item.assets.map(i => i.uniqueId)]);
+    }, []),
+);
+const mapStateToProps = state => ({
   gallery: state.imageStore.present.gallery,
-}))(PhotoGallery);
+  gallerySelected: state.imageStore.present.gallerySelected,
+  usedPhoto: usedPhotoSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+  changeGallery: gallery => {
+    return dispatch(imageStoreAction.image.changeGallery(gallery));
+  },
+  selectedImageFromGallery: images => {
+    return dispatch(imageStoreAction.image.selectImageFromGallery(images));
+  },
+});
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PhotoGallery);

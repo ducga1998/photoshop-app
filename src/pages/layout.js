@@ -6,13 +6,15 @@ import { AutoSizer } from 'react-virtualized';
 import MainHeader from '../components/Header/MainHeader';
 import MenuLeft from '../components/MenuLeft/MenuLeft';
 import EditAreaHeader from '../components/Header/EditAreaHeader';
-import ImageView from '../components/images/ImageView';
+import ImageView from '../components/Images/ImageView';
 import Frame from '../components/frame/Frame';
 import { connect } from 'react-redux';
-import { createAction } from 'redux-actions';
 import { STATE_DRAGGING } from '../helpers/utils';
 import IconNext from '../static/img/ic_edit_area/ic_next_spread/ic_next_spread.svg';
 import IconPrev from '../static/img/ic_edit_area/ic_prev_spread/ic_prev_spread.svg';
+import { toast } from 'react-toastify';
+import imageStoreAction from '../store/imageStore/actions';
+import authorizedRequest from '../helpers/request/authorizedRequest';
 
 const Container = styled.div`
   font-family: sans-serif;
@@ -72,9 +74,9 @@ function Layout(props) {
         <MenuLeft
           onChangeSpread={item => {
             props.changeSpread(item.idPage);
-            props.setSelect([]);
           }}
         />
+        {/*{bool? 'cdscdscdscds' : 'duc'}*/}
         <Content
           ref={refContent}
           data-outside="layout_outside"
@@ -85,6 +87,8 @@ function Layout(props) {
               target.getAttribute('data-outside') &&
               target.getAttribute('data-outside').startsWith('layout_outside')
             ) {
+              e.preventDefault();
+              e.stopPropagation();
               props.setSelect([]);
             }
           }}
@@ -104,6 +108,23 @@ function Layout(props) {
               target.getAttribute('data-outside').startsWith('layout_outside')
             ) {
               props.deleteImage(STATE_DRAGGING.idDragging);
+              const data = {
+                assets: props.spreadDataSelected.assets,
+                leftLayoutIndex: 0,
+                pagespreadIndex: 1,
+                rightLayoutIndex: 0,
+              };
+              const result = await authorizedRequest.put(
+                `https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/relayout/p-7ubVMK7eak6da3MwH7vz5X/spread/` +
+                  'left',
+                data,
+              );
+              if (result && Object.keys(result).length === 0) {
+                toast.error('Maximum in layout');
+                return;
+              }
+              await props.relayout(result);
+
               STATE_DRAGGING.clear();
             }
           }}
@@ -117,7 +138,7 @@ function Layout(props) {
           <div style={{ flex: 1, width: '100%' }}>
             <AutoSizer onResize={onResize}>
               {({ width, height }) => {
-                let aspectRatio = 1.825;
+                let aspectRatio = 2;
                 const maxWidth = width * 0.75;
                 const maxHeight = height * 0.9;
                 let h = maxHeight,
@@ -182,28 +203,29 @@ function Layout(props) {
 }
 
 const mapStateToProps = state => {
+  const selectedSpread = (() => {
+    const { initImageState } = state.imageStore.present;
+    return (
+      initImageState.find(
+        spreadItem => spreadItem.idPage === state.imageStore.present.spread,
+      ) || initImageState[0]
+    );
+  })();
   return {
     image: state.imageStore.present.initImageState,
     spread: state.imageStore.present.spread,
-    spreadDataSelected: (() => {
-      const { initImageState } = state.imageStore.present;
-      return (
-        initImageState.find(
-          spreadItem => spreadItem.idPage === state.imageStore.present.spread,
-        ) || initImageState[0]
-      );
-    })(),
+    spreadDataSelected: selectedSpread,
+    id: selectedSpread && selectedSpread.idPage,
   };
 };
 const mapDispatchToProps = dispatch => ({
   changeSpread: spreadIndex => {
-    dispatch(createAction('CHANGE_SPREAD')(spreadIndex));
+    dispatch(imageStoreAction.image.changeSpread(spreadIndex));
   },
-  relayout: data => dispatch(createAction('RE_LAYOUT')(data)),
-  changeImage: data => dispatch('CHANGE_IMG_DATA')({ data }),
-  setSelect: id => dispatch(createAction('SET_SELECTED')(id)),
+  relayout: data => dispatch(imageStoreAction.image.reLayout(data)),
+  setSelect: id => dispatch(imageStoreAction.image.setSelected(id)),
   deleteImage: id => {
-    return dispatch(createAction('DELETE_IMG')(id));
+    return dispatch(imageStoreAction.image.deleteImg(id));
   },
 });
 export default connect(

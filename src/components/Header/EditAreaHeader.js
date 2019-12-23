@@ -1,10 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ActionCreators as UndoActionCreators } from 'redux-undo';
 import ArrowUndoIcon from '../../static/img/ic_edit_area/ic_arrow_undo/ic_arrow_undo.svg';
 import ArrowRedoIcon from '../../static/img/ic_edit_area/ic_arrow_redo/ic_arrow_redo.svg';
 import HelpIcon from '../../static/img/ic_edit_area/ic_help/ic_help.svg';
 import { connect } from 'react-redux';
+import authorizedRequest from '../../helpers/request/authorizedRequest';
+import { idProject } from '../../store/imageStore/saga';
+import config from '../../config';
+import { toast } from 'react-toastify';
+import { undoableAction } from '../../helpers/undoable';
 
 const Container = styled.div`
   width: 100%;
@@ -46,7 +50,35 @@ const ButtonIcon = styled.img`
   margin-bottom: 3px;
 `;
 
-function EditAreaHeader({ canUndo, canRedo, onUndo, onRedo }) {
+function EditAreaHeader({ canUndo, canRedo, onUndo, onRedo, initImageState }) {
+  const handleSaveProject = async () => {
+    console.log('initImageState', initImageState);
+    const rawData = initImageState.map(imgState => {
+      return {
+        assets: imgState.assets,
+      };
+    });
+    const rawDataSendServer = {
+      photobook: {
+        coverid: '20171212_145352.jpg',
+        pagespreads: rawData,
+      },
+    };
+    const respond = await authorizedRequest.put(
+      config.BASE_URL_REQUEST + idProject,
+      {
+        layout: rawDataSendServer,
+      },
+    );
+    if (respond.layout) {
+      if (process.browser) {
+        localStorage.setItem('pwa-store', '');
+      }
+      toast.success('Save Success');
+    } else {
+      toast.error('Save False');
+    }
+  };
   return (
     <Container>
       <ButtonGroup>
@@ -59,24 +91,31 @@ function EditAreaHeader({ canUndo, canRedo, onUndo, onRedo }) {
           <span>Redo</span>
         </Button>
       </ButtonGroup>
-      <Button>
-        <ButtonIcon src={HelpIcon} alt={''} />
-        <span>Help</span>
-      </Button>
+      <ButtonGroup>
+        <Button onClick={handleSaveProject}>
+          <span>Save</span>
+        </Button>
+        <Button>
+          <ButtonIcon src={HelpIcon} alt={''} />
+          <span>Help</span>
+        </Button>
+      </ButtonGroup>
     </Container>
   );
 }
+
 const mapStateToProps = state => {
   return {
     canUndo: state.imageStore.past.length > 0,
     canRedo: state.imageStore.future.length > 0,
+    initImageState: state.imageStore.present.initImageState,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onUndo: () => dispatch(UndoActionCreators.undo()),
-    onRedo: () => dispatch(UndoActionCreators.redo()),
+    onUndo: () => dispatch(undoableAction.undo()),
+    onRedo: () => dispatch(undoableAction.redo()),
   };
 };
 export default connect(

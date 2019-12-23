@@ -1,9 +1,9 @@
 import { call, delay, fork, put } from 'redux-saga/effects';
 
-import authenticateActions from './actions';
+import imageStoreAction from './actions';
 import authorizedRequest from '../../helpers/request/authorizedRequest';
 
-const idProject = 'p-pFWrCqq5jmARDeuSLxaP8s';
+export const idProject = 'p-7ubVMK7eak6da3MwH7vz5X';
 
 function* fetchInitData() {
   yield delay(500);
@@ -11,7 +11,7 @@ function* fetchInitData() {
     'https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/project/' +
       idProject,
   );
-  yield put(authenticateActions.initData(data));
+  yield put(imageStoreAction.image.initData(data));
 }
 function* initData() {
   yield call(fetchInitData);

@@ -4,9 +4,13 @@ import Link from 'next/link';
 const Home = () => (
   <div>
     <div className="hero">
-      <Link href={`/image`}>Image</Link>
+      <Link href={`/image`}>
+        <a>Image</a>
+      </Link>
       <br />
-      <Link href={'/layout'}>Layout</Link>
+      <Link href={'/layout'}>
+        <a>Layout</a>
+      </Link>
     </div>
 
     <style jsx>{`

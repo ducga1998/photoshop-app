@@ -1,0 +1,7 @@
+.img-preview {
+  display: none;
+  position: absolute;
+  opacity: 0.5;
+  z-index: 999;
+  pointer-events: none;
+}
