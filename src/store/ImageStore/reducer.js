@@ -10,6 +10,7 @@ import * as uuid from 'uuid';
 import _omit from 'lodash/omit';
 import imageStoreAction from './actions';
 import { undoable } from '../../helpers/undoable';
+import { isClientSide } from '../../helpers/render.helper';
 
 let INITIAL_STATE = {
   initImageState: [],
@@ -17,6 +18,10 @@ let INITIAL_STATE = {
   spread: null,
   gallery: [],
   gallerySelected: [],
+  stateMobile: {
+    active: 'ViewAllSpread',
+    activeGallery: false,
+  },
 };
 const imageStoreReduce = handleActions(
   {
@@ -29,7 +34,7 @@ const imageStoreReduce = handleActions(
       INIT_DATA: (state, { payload: rawData }) => {
         let standardData;
         const { initImageState, gallery } = convertRawDataToStandard(rawData);
-        if (process.browser) {
+        if (isClientSide()) {
           const storecache = localStorage.getItem('pwa-store');
           if (!storecache || (storecache && storecache.length === 0)) {
             standardData = { initImageState, gallery };
@@ -38,6 +43,12 @@ const imageStoreReduce = handleActions(
           }
         }
         return { ...state, ...standardData };
+      },
+      TOGGLE_ACTIVE_SPREAD: (state, { payload: active }) => {
+        return {
+          ...state,
+          stateMobile: { ...state.stateMobile, activeGallery: active },
+        };
       },
       SWAP_IMG: (state, { payload: { idDrapStart, idDrop } }) => {
         const listImmutable = List(state.initImageState);
@@ -56,6 +67,7 @@ const imageStoreReduce = handleActions(
           'flipHorizontal',
           'flipVertical',
           'filterColor',
+          'uniqueId',
         ];
         const changeArray = listSwapKey.reduce((acc, key) => {
           return acc
@@ -85,6 +97,9 @@ const imageStoreReduce = handleActions(
           newImageSpead,
         );
         return { ...state, ...{ initImageState: changeArray.toArray() } };
+      },
+      CHANGE_VIEW_MOBILE: (state, { payload: { view } }) => {
+        return { ...state, ...{ stateMobile: { active: view } } };
       },
       // change image as use data action  (idElement)
       CHANGE_IMG_DATA: (state, { payload: { data, idDrop } }) => {
@@ -155,8 +170,13 @@ const imageStoreReduce = handleActions(
           spread: currentSpread,
         };
       },
-      DELETE_IMG: state => {
-        const listIdDelete = state.selected.map(select => select.idElement);
+      DELETE_IMG: (state, { payload: listId }) => {
+        let listIdDelete = [];
+        if (!listId) {
+          listIdDelete = state.selected.map(select => select.idElement);
+        } else {
+          listIdDelete = listId;
+        }
         const listImmutable = List(state.initImageState);
         const { imageSpread, indexPage } = getIndexSpreadAndSpreadData(state);
         const deletedList = imageSpread.assets.filter(
@@ -196,6 +216,20 @@ const imageStoreReduce = handleActions(
         return {
           ...state,
           gallerySelected: payload || [],
+        };
+      },
+      ADD_NEW_SPREAD: (state, action) => {
+        const { index } = action.payload;
+        const newArray = [...state.initImageState];
+        newArray.splice(index, 0, {
+          assets: [],
+          idPage: uuid(),
+          leftLayoutIndex: 0,
+          rightLayoutIndex: 0,
+        });
+        return {
+          ...state,
+          initImageState: newArray,
         };
       },
     },

@@ -3,22 +3,22 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { mapStore } from '../Images/ImageView';
 // import { fabric } from 'fabric';
-import Delete from '../../static/img/ic_core/Delete.component.svg';
-import Rotate from '../../static/img/ic_core/Rotate.component.svg';
-import Filter from '../../static/img/ic_core/Filter.component.svg';
-import Flip from '../../static/img/ic_core/Flip.component.svg';
+import Delete from '../../static/img/ic_core/delete.component.svg';
+import Rotate from '../../static/img/ic_core/rotate.component.svg';
+import Filter from '../../static/img/ic_core/filter.component.svg';
+import Flip from '../../static/img/ic_core/flip.component.svg';
+import ReplaceImage from '../../static/img/ic_core/replaceImage.component.svg';
 import {
   convertPxToProportion,
-  STATE_DRAGGING,
   translateOnFlip,
   translateOnRotate,
-} from '../../helpers/utils';
-import authorizedRequest from '../../helpers/request/authorizedRequest';
-import { toast } from 'react-toastify';
+} from '../../helpers/position.helper';
+import { STATE_DRAGGING } from '../../helpers/utils';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import _ from 'lodash';
 import imageStoreAction from '../../store/imageStore/actions';
+import PhotoGallery from '../MenuLeft/PhotoGallery';
 
 // fabric.filterBackend = webglBackend;
 
@@ -155,23 +155,7 @@ class Toolbar extends React.Component {
     this.props.changeImageData({ data: { filterColor } });
   };
   deleteImage = async () => {
-    await this.props.deleteImg();
-    const data = {
-      assets: this.props.spreadDataSelected.assets,
-      leftLayoutIndex: 0,
-      pagespreadIndex: 1,
-      rightLayoutIndex: 0,
-    };
-    const result = await authorizedRequest.put(
-      `https://t69kla0zpk.execute-api.ap-southeast-1.amazonaws.com/dev/relayout/p-7ubVMK7eak6da3MwH7vz5X/spread/` +
-        'left',
-      data,
-    );
-    if (result && Object.keys(result).length === 0) {
-      toast.error('Maximum in layout');
-      return;
-    }
-    await this.props.relayout(result);
+    await this.props.deleteImageAsync();
     STATE_DRAGGING.clear();
   };
 
@@ -180,7 +164,12 @@ class Toolbar extends React.Component {
     if (!this.props.selected && !this.props.selected.length) {
       return null;
     }
-    const { selected, selectedAssets } = this.props;
+    const {
+      selected,
+      selectedAssets,
+      isMobile,
+      activeGalleryOnMobile,
+    } = this.props;
     if (selected && !selected.length) return;
     const rect = selected.reduce(
       (init, next, currentIndex, intArr) => {
@@ -198,13 +187,23 @@ class Toolbar extends React.Component {
       },
       { top: 0, left: 0, widthWraper: 0, heightWraper: 0 },
     );
-    if (!rect.top) return null;
+    if (!rect.top || this.props.isInSpead) return null;
     const activeFilterColor =
       selectedAssets.length && selectedAssets[0].filterColor
         ? selectedAssets[0].filterColor
         : '';
     return (
       <Wrapper {...rect} data-outside="toolbar">
+        {isMobile && (
+          <TooggleButton
+            active={activeGalleryOnMobile}
+            stroke={'true'}
+            onClick={() => {
+              this.props.toggleActiveGalleryOnMobile(!activeGalleryOnMobile);
+            }}>
+            <ReplaceImage />
+          </TooggleButton>
+        )}
         <TooggleButton stroke={'true'} onClick={this.flipImage}>
           Flip <Flip />{' '}
         </TooggleButton>
@@ -246,6 +245,13 @@ class Toolbar extends React.Component {
             })}
           </WrapperColorFilter>
         )}
+
+        {isMobile && activeGalleryOnMobile && (
+          <WrapperGallery>
+            <div></div>
+            <PhotoGallery show isMobile={isMobile} hidden={() => {}} />
+          </WrapperGallery>
+        )}
       </Wrapper>
     );
   }
@@ -278,6 +284,7 @@ const getCurrentSelected = createSelector(
 const mapStateToProps = state => {
   return {
     selectedAssets: getCurrentSelected(state),
+    activeGalleryOnMobile: state.imageStore.present.stateMobile.activeGallery,
   };
 };
 
@@ -288,9 +295,22 @@ export default connect(
       changeListImageData: arr =>
         dispatch(imageStoreAction.image.changeListImgData(arr)),
       setSelect: id => dispatch(imageStoreAction.image.setSelected(id)),
+      toggleActiveGalleryOnMobile: toggle =>
+        dispatch(imageStoreAction.image.toggleActiveSpread(toggle)),
+      deleteImageAsync: id => dispatch({ type: 'DELETE_IMG_ASYNC', id }),
     };
   },
 )(Toolbar);
+const ToggleFilter = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  background: #e0e0e0;
+  margin: 9px;
+  font-size: 8px;
+  text-align: center;
+  color: ${props => (props.active ? 'white' : '#828282')};
+  background: ${props => (props.active ? '#b06ab3' : '')};
+`;
 const WrapperColorFilter = styled.div`
   width: 450px;
   background: #828282;
@@ -301,28 +321,55 @@ const WrapperColorFilter = styled.div`
   z-index: 1;
   top: ${props => (props.isTop ? '90px' : '-90px')};
   transform: translateX(-10%);
+  @media (max-width: 1024px) {
+    top: 0px;
+    transform: translateY(-100%);
+    border-radius: 0px;
+    width: 100%;
+    ${ToggleFilter} {
+      flex: 1;
+      padding: 20px;
+      width: 60px;
+    }
+  }
 `;
-const ToggleFilter = styled.div`
-  padding: 10px;
-  cursor: pointer;
-  background: #e0e0e0;
-  margin: 9px;
-  font-size: 8px;
-  color: ${props => (props.active ? 'white' : '#828282')};
-  background: ${props => (props.active ? '#b06ab3' : '')};
+const WrapperGallery = styled.div`
+  display: none;
+  overflow-x: scroll;
+  position: absolute;
+  @media (max-width: 1024px) {
+    display: flex;
+    top: 0px;
+    transform: translateY(-100%);
+    border-radius: 0px;
+    width: 1000px;
+  }
+  @media (max-width: 480px) {
+    width: 500px;
+  }
 `;
+
 const Wrapper = styled.div`
   position: fixed;
   background: #494b4d;
   display: flex;
-  z-index: 2;
+  z-index: 6;
   border-radius: 6px;
   top: ${props => (props.top ? props.top + props.heightWraper + 'px' : '0px')};
   left: ${props =>
     props.left ? props.left + props.widthWraper / 2 + 'px' : '0px'};
   transform: translate(-50%, 20%);
+  @media (max-width: 1024px) {
+    top: initial;
+    bottom: 0px;
+    width: 100%;
+    left: 0px;
+    border-radius: 0px;
+    transform: none;
+  }
 `;
 const TooggleButton = styled.div`
+
   display: flex;
   align-content: center;
   justify-content: left;
@@ -351,4 +398,8 @@ const TooggleButton = styled.div`
   }
   flex-direction: column-reverse;
   text-align: center;
+  @media (max-width: 1024px) {
+    font-size: 0px;
+    height: auto;
+  }
 `;

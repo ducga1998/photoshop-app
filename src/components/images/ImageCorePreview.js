@@ -2,8 +2,8 @@ import * as React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { fabric } from 'fabric';
-import { customPositionAndRoute } from '../../helpers/utils';
 import withExifLoaded from './withExifLoaded';
+import { customPositionAndRoute } from '../../helpers/position.helper';
 
 const f = fabric.Image.filters;
 
@@ -144,7 +144,7 @@ class ImageCorePreview extends React.PureComponent {
     // console.log('props item', this.props);
     const { rect, item } = this.props;
     return (
-      <Item {...rect} data-element={item.idElement} draggable>
+      <Item {...rect} data-element={item.idElement}>
         <canvas
           {...rect}
           style={{ width: '100%', height: '100%1' }}

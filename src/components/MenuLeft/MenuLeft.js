@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import BookSpreads from './BookSpreads';
@@ -22,8 +22,11 @@ import OrientationActiveIcon from '../../static/img/ic_menu_left/ic_orientation/
 import OrientationInactiveIcon from '../../static/img/ic_menu_left/ic_orientation/ic_orientation_inactive.svg';
 import PageActiveIcon from '../../static/img/ic_menu_left/ic_page/ic_page_active.svg';
 import PageInactiveIcon from '../../static/img/ic_menu_left/ic_page/ic_page_inactive.svg';
+import { connect } from 'react-redux';
+import { useWindowWidth } from '../../hooks/useWindowWidth';
+import Responsive from '../Responsive/Responsive';
 
-const Wrapper = styled.div`
+const WrapperContainer = styled.div`
   position: relative;
   overflow: auto;
   width: 100px;
@@ -42,6 +45,20 @@ const Wrapper = styled.div`
   &::-webkit-scrollbar-thumb {
     background: #000;
   }
+  @media (max-width: 1024px) {
+    //position: fixed;
+    //width: 100%;
+    // min-width: 0px;
+    // width: 0px;
+    flex-direction: row;
+    height: 53px;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    z-index: 10;
+    overflow: initial;
+  }
 `;
 
 const Container = styled.div`
@@ -50,6 +67,14 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background: #ededed;
+  @media (max-width: 1024px) {
+    flex-direction: row;
+    width: 100%;
+    position: relative;
+    bottom: 0px;
+    left: 0px;
+    z-index: 10;
+  }
 `;
 
 const ItemMenu = styled.div`
@@ -65,6 +90,16 @@ const ItemMenu = styled.div`
 
   &:hover {
     background-color: #b06ab3;
+  }
+  @media (max-width: 1024px) {
+    color: #494b4d;
+    background: initial;
+    height: 50px;
+    border-top: ${props =>
+      props.active ? '3px solid black' : '3px solid transparent'};
+    &:hover {
+      background-color: initial;
+    }
   }
 `;
 
@@ -89,10 +124,36 @@ const TitleMenu = styled.div`
   ${ItemMenu}:hover & {
     color: #fff;
   }
+  @media (max-width: 1024px) {
+    font-size: 0px;
+  }
+`;
+const Wrapper = styled.div`
+  display: flex;
+  @media (max-width: 1024px) {
+    display: none;
+  }
+`;
+const MenuBarMobile = styled.div`
+  width: 100%;
+  top: 0px;
+  position: absolute;
+  transform: translateY(-100%);
+  left: 0px;
+  z-index: -1;
+  height: 150px;
 `;
 
 function MenuLeft(props) {
-  const [mode, setMode] = useState('book-spreads');
+  const isMobile = useWindowWidth() < 1024;
+  const [mode, setMode] = useState(null);
+  useEffect(() => {
+    if (isMobile) {
+      setMode('');
+    } else {
+      setMode('book-spreads');
+    }
+  }, [isMobile]);
   const menu = useMemo(() => {
     return [
       {
@@ -147,9 +208,70 @@ function MenuLeft(props) {
     ];
   }, []);
 
-  return (
-    <div style={{ display: 'flex' }}>
-      <Wrapper>
+  // render mobile
+  function renderMobile() {
+    return (
+      <WrapperContainer>
+        <Container>
+          {menu.map(item => {
+            if (item.id === 'book-spreads') return null;
+            return (
+              <ItemMenu
+                key={item.id}
+                onClick={item.onClick}
+                active={mode === item.id}>
+                <IconMenu
+                  active={mode === item.id}
+                  iconActive={item.iconInactive}
+                  iconInactive={item.iconInactive}
+                />
+                <TitleMenu active={mode === item.id}>{item.title}</TitleMenu>
+              </ItemMenu>
+            );
+          })}
+          {mode && (
+            <MenuBarMobile>
+              <div style={{ position: 'relative' }}>
+                <PhotoGallery
+                  isMobile={true}
+                  show={mode === 'photo-gallery'}
+                  hidden={() => setMode(null)}
+                />
+                <Templates
+                  isMobile={true}
+                  show={mode === 'templates'}
+                  hidden={() => setMode(null)}
+                />
+                <Fonts
+                  isMobile={true}
+                  show={mode === 'fonts'}
+                  hidden={() => setMode(null)}
+                />
+                <Background
+                  isMobile={true}
+                  show={mode === 'background'}
+                  hidden={() => setMode(null)}
+                />
+                <Orientation
+                  show={mode === 'orientation'}
+                  hidden={() => setMode(null)}
+                />
+                <PageSettings
+                  isMobile={true}
+                  show={mode === 'page-settings'}
+                  hidden={() => setMode(null)}
+                />
+              </div>
+            </MenuBarMobile>
+          )}
+        </Container>
+      </WrapperContainer>
+    );
+  }
+
+  const renderDesktop = () => (
+    <Wrapper>
+      <WrapperContainer>
         <Container>
           {menu.map(item => (
             <ItemMenu
@@ -165,7 +287,7 @@ function MenuLeft(props) {
             </ItemMenu>
           ))}
         </Container>
-      </Wrapper>
+      </WrapperContainer>
       <div
         style={{
           width: mode ? 300 : 0,
@@ -184,6 +306,7 @@ function MenuLeft(props) {
         <Templates show={mode === 'templates'} hidden={() => setMode(null)} />
         <Fonts show={mode === 'fonts'} hidden={() => setMode(null)} />
         <Background show={mode === 'background'} hidden={() => setMode(null)} />
+
         <Orientation
           show={mode === 'orientation'}
           hidden={() => setMode(null)}
@@ -193,8 +316,30 @@ function MenuLeft(props) {
           hidden={() => setMode(null)}
         />
       </div>
-    </div>
+    </Wrapper>
+  );
+
+  return (
+    <Responsive>
+      {matches => {
+        return (
+          <>
+            {matches.mobile && props.viewMobileInSpread === 'ViewAllSpread'
+              ? renderMobile()
+              : renderDesktop()}
+          </>
+        );
+      }}
+    </Responsive>
   );
 }
 
-export default MenuLeft;
+// toolbar white => viewMobileInSpread === 'allspread' && isMobile = true
+//toolbar white isMobile= false => render
+// toolbar white isMobile  = true and viewMobileInSpread == 'Spread' => not render
+const mapStateToProps = state => {
+  return {
+    viewMobileInSpread: state.imageStore.present.stateMobile.active,
+  };
+};
+export default connect(mapStateToProps)(MenuLeft);

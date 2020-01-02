@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ImageView from '../components/Images/ImageView';
-import Frame from '../components/frame/Frame';
+import Frame from '../components/Frame/Frame';
 import { connect } from 'react-redux';
 
 class Image extends React.PureComponent {

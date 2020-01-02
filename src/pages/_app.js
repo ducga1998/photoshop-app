@@ -6,6 +6,7 @@ import { configStore } from '../store';
 import Head from 'next/head';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { isClientSide } from '../helpers/render.helper';
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -18,7 +19,7 @@ class MyApp extends App {
   render() {
     const { Component, pageProps, store } = this.props;
 
-    if (process.browser) {
+    if (isClientSide()) {
       window['storeRedux'] = store;
     }
     return (

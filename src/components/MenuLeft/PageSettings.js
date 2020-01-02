@@ -15,6 +15,13 @@ const Container = styled.div`
   height: calc(100vh - 70px);
   background-color: #f4f4f4;
   transition: ${props => (props.show ? '0.3s ease-in-out 0.3s' : '0.3s')};
+  @media (max-width: 1024px) {
+    height: initial;
+    width: ${props => (props.show ? '100%' : '0px')};
+    position: absolute;
+    top: 0px;
+    z-index: -1;
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -23,6 +30,9 @@ const ElementGroup = styled.div`
   opacity: ${props => (props.show ? 1 : 0)};
   transition: ${props =>
     props.show ? 'opacity 0.3s ease-in-out 0.6s' : 'none'};
+  @media (max-width: 1024px) {
+    width: ${props => (props.show ? '100%' : '0px')};
+  }
 `;
 
 const PageWrapper = styled.div`
@@ -50,6 +60,10 @@ const PageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0px 10px;
+  @media (max-width: 1024px) {
+    flex-direction: row;
+    overflow-y: scroll;
+  }
 `;
 
 const Page = styled.div`
@@ -109,6 +123,9 @@ const ButtonBack = styled.div`
 
   &:hover {
     background-color: #b06ab3;
+  }
+  @media (max-width: 1024px) {
+    display: none;
   }
 `;
 

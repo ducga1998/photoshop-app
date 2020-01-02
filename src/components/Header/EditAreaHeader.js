@@ -2,17 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import ArrowUndoIcon from '../../static/img/ic_edit_area/ic_arrow_undo/ic_arrow_undo.svg';
 import ArrowRedoIcon from '../../static/img/ic_edit_area/ic_arrow_redo/ic_arrow_redo.svg';
+import BookInactiveIcon from '../../static/img/ic_core/ic_book.component.svg';
+
 import HelpIcon from '../../static/img/ic_edit_area/ic_help/ic_help.svg';
+import Grid from '../../static/img/ic_core/grid.component.svg';
 import { connect } from 'react-redux';
-import authorizedRequest from '../../helpers/request/authorizedRequest';
-import { idProject } from '../../store/imageStore/saga';
-import config from '../../config';
-import { toast } from 'react-toastify';
 import { undoableAction } from '../../helpers/undoable';
+import imageStoreAction from '../../store/imageStore/actions';
+import Responsive from '../Responsive/Responsive';
 
 const Container = styled.div`
   width: 100%;
-  height: 60px;
+  height: 65px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -42,42 +43,57 @@ const Button = styled.div`
   &:hover {
     background: linear-gradient(90deg, #4568dc 0%, #b06ab3 100%);
   }
+  path {
+    stroke: white;
+  }
+  @media (max-width: 1024px) {
+    font-size: 0px;
+  }
+`;
+const ButtonMobile = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  padding: 0px 15px;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  opacity: ${props => (props.disabled ? '0.5' : '1')};
+  pointer-events: ${props => (props.disabled ? 'none' : '')};
+
+  path {
+    stroke: white;
+  }
+  @media (max-width: 1024px) {
+    font-size: 0px;
+    background: ${props => (props.active ? '#bdbdbd' : '#58595a')};
+    border-radius: 8px 8px 0px 0px;
+    margin: 5px 10px 0px 0px;
+  }
 `;
 
 const ButtonIcon = styled.img`
   width: 30px;
   height: 30px;
   margin-bottom: 3px;
+  path {
+    fill: white;
+  }
 `;
 
-function EditAreaHeader({ canUndo, canRedo, onUndo, onRedo, initImageState }) {
+function EditAreaHeader({
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
+  saveProject,
+  onActive,
+  activeViewInMobile,
+}) {
   const handleSaveProject = async () => {
-    console.log('initImageState', initImageState);
-    const rawData = initImageState.map(imgState => {
-      return {
-        assets: imgState.assets,
-      };
-    });
-    const rawDataSendServer = {
-      photobook: {
-        coverid: '20171212_145352.jpg',
-        pagespreads: rawData,
-      },
-    };
-    const respond = await authorizedRequest.put(
-      config.BASE_URL_REQUEST + idProject,
-      {
-        layout: rawDataSendServer,
-      },
-    );
-    if (respond.layout) {
-      if (process.browser) {
-        localStorage.setItem('pwa-store', '');
-      }
-      toast.success('Save Success');
-    } else {
-      toast.error('Save False');
-    }
+    saveProject();
   };
   return (
     <Container>
@@ -99,6 +115,25 @@ function EditAreaHeader({ canUndo, canRedo, onUndo, onRedo, initImageState }) {
           <ButtonIcon src={HelpIcon} alt={''} />
           <span>Help</span>
         </Button>
+        <Responsive>
+          {({ mobile }) =>
+            mobile && (
+              <>
+                {[
+                  { value: 'ViewAllSpread', icon: Grid },
+                  { value: 'Spread', icon: BookInactiveIcon },
+                ].map((Item, index) => (
+                  <ButtonMobile
+                    key={String(index)}
+                    active={activeViewInMobile === Item.value}
+                    onClick={() => onActive(Item.value)}>
+                    <Item.icon />
+                  </ButtonMobile>
+                ))}
+              </>
+            )
+          }
+        </Responsive>
       </ButtonGroup>
     </Container>
   );
@@ -108,14 +143,17 @@ const mapStateToProps = state => {
   return {
     canUndo: state.imageStore.past.length > 0,
     canRedo: state.imageStore.future.length > 0,
-    initImageState: state.imageStore.present.initImageState,
+    activeViewInMobile: state.imageStore.present.stateMobile.active,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    saveProject: () => dispatch({ type: 'SAVE_PROJECT' }),
     onUndo: () => dispatch(undoableAction.undo()),
     onRedo: () => dispatch(undoableAction.redo()),
+    onActive: view =>
+      dispatch(imageStoreAction.image.changeViewMobile({ view })),
   };
 };
 export default connect(

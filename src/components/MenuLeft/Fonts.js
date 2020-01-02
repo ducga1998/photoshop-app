@@ -24,6 +24,9 @@ const Container = styled.div`
   height: calc(100vh - 70px);
   background-color: #f4f4f4;
   transition: ${props => (props.show ? '0.3s ease-in-out 0.3s' : '0.3s')};
+  @media (max-width: 1024px) {
+    width: ${props => (props.show ? '100%' : '0px')};
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -32,6 +35,12 @@ const ElementGroup = styled.div`
   opacity: ${props => (props.show ? 1 : 0)};
   transition: ${props =>
     props.show ? 'opacity 0.3s ease-in-out 0.6s' : 'none'};
+  @media (max-width: 1024px) {
+    width: ${props => (props.show ? '100%' : '0px')};
+    position: absolute;
+    top: 0px;
+    background: #f4f4f4;
+  }
 `;
 
 const FontsWrapper = styled.div`
@@ -52,6 +61,9 @@ const FontsWrapper = styled.div`
     background: #bdbdbd;
     border-radius: 8px;
   }
+  @media (max-width: 1024px) {
+    margin: 0px;
+  }
 `;
 
 const FontsContainer = styled.div`
@@ -59,6 +71,10 @@ const FontsContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0px 10px;
+  @media (max-width: 1024px) {
+    flex-direction: row;
+    padding: 0px;
+  }
 `;
 
 const Font = styled.div`
@@ -67,7 +83,7 @@ const Font = styled.div`
   flex-direction: column;
   width: 100%;
   height: 90px;
-  margin-bottom: 20px;
+  margin: 20px 10px 20px 10px;
   background-color: #fff;
   box-shadow: 0px 2px 12px rgba(22, 25, 101, 0.05);
   border-radius: 6px;
@@ -120,13 +136,34 @@ const ButtonBack = styled.div`
   &:hover {
     background-color: #b06ab3;
   }
+  @media (max-width: 1024px) {
+    display: none;
+  }
 `;
 
 const ButtonBackIcon = styled.img`
   height: 15px;
 `;
 
-function Fonts({ show, hidden }) {
+function Fonts({ show, hidden, isMobile }) {
+  if (isMobile) {
+    return (
+      <ElementGroup show={show}>
+        <FontsWrapper>
+          <FontsContainer>
+            {fonts.map(item => (
+              <Font key={item.title}>
+                <StyleFont style={{ fontFamily: item.font }}>
+                  AaBbCcDdEeFfGg
+                </StyleFont>
+                <TitleFont>{item.title}</TitleFont>
+              </Font>
+            ))}
+          </FontsContainer>
+        </FontsWrapper>
+      </ElementGroup>
+    );
+  }
   return (
     <React.Fragment>
       <Head>

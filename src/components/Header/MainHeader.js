@@ -17,6 +17,9 @@ const Container = styled.div`
   z-index: 100;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  @media (max-width: 480px) {
+    padding: 20px;
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -58,6 +61,9 @@ const LogoContainer = styled.div`
   height: 30px;
   margin-left: 40px;
   cursor: pointer;
+  @media (max-width: 480px) {
+    margin-left: 20px;
+  }
 `;
 
 const ImageLogo = styled.img`
@@ -69,6 +75,9 @@ const CompanyName = styled.span`
   font-size: 25px;
   margin-left: 10px;
   color: #494b4d;
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 `;
 
 const ButtonBorder = styled.div`
@@ -88,6 +97,7 @@ const ButtonBorder = styled.div`
 
   &:before {
     content: '';
+
     position: absolute;
     top: 0;
     left: 0;
@@ -98,6 +108,11 @@ const ButtonBorder = styled.div`
     margin: -3px;
     background: linear-gradient(90deg, #4568dc 0%, #b06ab3 100%);
   }
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 28px;
+    margin-right: 13px;
+  }
 `;
 
 const TextGradient = styled.p`
@@ -106,6 +121,9 @@ const TextGradient = styled.p`
   background: linear-gradient(90deg, #4568dc 0%, #b06ab3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 `;
 
 const ButtonBackground = styled.div`
@@ -120,6 +138,11 @@ const ButtonBackground = styled.div`
   font-weight: 900;
   color: #fff;
   background-image: linear-gradient(90deg, #4568dc 0%, #b06ab3 100%);
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 28px;
+    font-size: 10px;
+  }
 `;
 
 function MainHeader() {

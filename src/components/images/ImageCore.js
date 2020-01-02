@@ -1,13 +1,14 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { fabric } from 'fabric';
+import { getFromMaxMin } from '../../helpers/utils';
 import {
   convertProportionToPx,
   convertPxToProportion,
   customPositionAndRoute,
-  getFromMaxMin,
   getMaxMinRect,
-} from '../../helpers/utils';
+  getOrientations,
+} from '../../helpers/position.helper';
 import { mapStore } from './ImageView';
 import withExifLoaded from './withExifLoaded';
 import _ from 'lodash';
@@ -15,6 +16,7 @@ import PropTypes from 'prop-types';
 import exif2css from 'exif2css';
 
 import './ImageCore.css';
+import Elements from '../Layout/Elements';
 
 const f = fabric.Image.filters;
 
@@ -98,13 +100,9 @@ class ImageCore extends React.Component {
           canvasItem,
         );
         this.applyFilter();
-        this.oldRotate = options.rotate || 0;
         Object.assign(imgFabric, options);
         imgFabric.flipY = !!item.flipVertical;
         imgFabric.flipX = !!item.flipHorizontal;
-        imgFabric.ratio = imgFabric.scaleX / imgFabric.scaleY;
-        // imgFabric.originalLeft = 0;
-        // imgFabric.originalTop = 0;
         canvasItem.add(imgFabric);
 
         this.setState({ loading: false });
@@ -130,10 +128,24 @@ class ImageCore extends React.Component {
     orientation,
   }) => {
     this.debounceRemovePreview.cancel();
-    this.preview.style.transform = exif2css(orientation).transform;
-    this.preview.style.transformOrigin = exif2css(orientation)[
-      'transform-origin'
-    ];
+    console.log(
+      getOrientations(
+        orientation,
+        this.props.item.rotate,
+        this.props.item.flipHorizontal,
+        this.props.item.flipVertical,
+      ),
+    );
+    const style = exif2css(
+      getOrientations(
+        orientation,
+        this.props.item.rotate,
+        this.props.item.flipHorizontal,
+        this.props.item.flipVertical,
+      ),
+    );
+    this.preview.style.transform = style.transform || '';
+    this.preview.style.transformOrigin = style['transform-origin'] || '';
     this.preview.style.display = 'block';
     this.preview.style.top = top + 'px';
     this.preview.style.left = left + 'px';
@@ -153,34 +165,31 @@ class ImageCore extends React.Component {
       if (!this.props.editable) {
         return;
       }
-      const delta = Math.min(Math.max(-4, opt.e.deltaY), 4);
-      const nextScaleX = imgFabric.scaleX * (1 + delta * 0.05);
-      const factor = imgFabric.scaleX / nextScaleX;
-      const dx = (opt.e.offsetX - imgFabric.left) * (factor - 1),
-        dy = (opt.e.offsetY - imgFabric.top) * (factor - 1);
+      const delta = Math.min(Math.max(-2, opt.e.deltaY), 2);
+      const factor = imgFabric.scaleX / (imgFabric.scaleX * (1 + delta * 0.05));
       const {
-        maxTop,
-        minTop,
-        maxLeft,
-        minLeft,
-        minScaleY,
+        // minScaleY,
         minScaleX,
       } = getMaxMinRect(imgFabric, canvasItem);
-      if (
-        imgFabric.scaleX * factor < minScaleX ||
-        imgFabric.scaleY * factor <= minScaleY
-      ) {
-        return;
-      }
+      const nextScaleX = getFromMaxMin(minScaleX, imgFabric.scaleX * factor, 5);
+      const affectedFactor = nextScaleX / imgFabric.scaleX;
+      const nextScaleY = imgFabric.scaleY * affectedFactor;
+
+      const { maxTop, minTop, maxLeft, minLeft } = getMaxMinRect(
+        imgFabric,
+        canvasItem,
+      );
+
+      const dx = (opt.e.offsetX - imgFabric.left) * (affectedFactor - 1),
+        dy = (opt.e.offsetY - imgFabric.top) * (affectedFactor - 1);
       imgFabric.top = getFromMaxMin(minTop, imgFabric.top - dy, maxTop);
       imgFabric.left = getFromMaxMin(minLeft, imgFabric.left - dx, maxLeft);
-      imgFabric.scaleX = getFromMaxMin(minScaleX, imgFabric.scaleX * factor, 5);
-      imgFabric.scaleY = getFromMaxMin(minScaleY, imgFabric.scaleY * factor, 5);
+      imgFabric.scaleX = nextScaleX;
+      imgFabric.scaleY = nextScaleY;
       this.setStyleForPreview(imgFabric);
       this.debounceRemovePreview();
       this._saveData();
       this.reRenderCanvas();
-      // console.log("")
     });
 
     let startOffsetX = 0,
@@ -333,55 +342,46 @@ class ImageCore extends React.Component {
   }
 
   render() {
-    const { item, frameHeight, frameWidth, editable } = this.props;
+    const { item, frameHeight, frameWidth, editable, onDrop } = this.props;
     const rect = convertProportionToPx(item.targetrect, {
       frameHeight,
       frameWidth,
     });
-    // console.log("rect",item.idElement,rect)
     return (
-      <Element
+      <Elements
         border={editable}
         {...rect}
         ref={ref => (this.canvasRef = ref)}
         data-element={item.idElement}
         data-src={item.src}
+        item={item}
+        onDrop={onDrop}
         isDelete={!item.src.length}
-        draggable
-        isDrag={editable}>
+        isEditing={editable}>
         {this.state.loading ? <Loading /> : null}
         <img
           src={item.src}
+          crossOrigin={'anonymous'}
           ref={ref => (this.preview = ref)}
           className="img-preview"
         />
         <Border border={editable} />
         {/*{item.uniqueId}*/}
-        <Canvas id={item.idElement} {...rect} isLoading={this.state.loading} />
-      </Element>
+        <Canvas
+          id={item.idElement}
+          {...rect}
+          isLoading={this.state.loading}
+          editable={editable}
+        />
+      </Elements>
     );
   }
 }
 
-const Element = styled.div`
-  color: black;
-  font-size: 9px;
-  position: absolute;
-  top: ${props => (props.top ? props.top + 'px' : '')};
-  width: ${props => (props.width ? props.width + 'px' : '')};
-  height: ${props => (props.height ? props.height + 'px' : '')};
-  left: ${props => (props.left ? props.left + 'px' : '')};
-  cursor: pointer;
-  box-sizing: content-box;
-  background: ${props => (props.isDelete ? '#d4d4d4' : '')};
-  canvas {
-    pointer-events: ${props => (props.isDrag ? 'auto' : 'none!important')};
-  }
-`;
-
 const Canvas = styled.canvas`
   width: 100%;
   height: 100%;
+  z-index: 3;
   display: ${props => (props.loading ? 'none' : 'block')};
 `;
 const Border = styled.div`
@@ -391,11 +391,10 @@ const Border = styled.div`
   top: 0px;
   left: 0px;
   box-sizing: border-box;
-  z-index: 1;
+  z-index: 5;
   pointer-events: none;
-
   border: ${props =>
-    props.border ? '2px dashed #494B4D;' : '3px dashed  transparent '};
+    props.border ? '3px dashed #494B4D;' : '3px dashed  transparent '};
 `;
 const Loading = styled.div`
   overflow: hidden;

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { List, AutoSizer } from 'react-virtualized';
+import { AutoSizer, List } from 'react-virtualized';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
 import ArrowBackIcon from '../../static/img/ic_menu_left/ic_arrow_back/ic_arrow_back.svg';
@@ -8,10 +8,12 @@ import TrashIcon from '../../static/img/ic_book_spreads/ic_trash/ic_trash.svg';
 import TriangleActiveIcon from '../../static/img/ic_book_spreads/ic_triangle/ic_triangle_active.svg';
 import TriangleInactiveIcon from '../../static/img/ic_book_spreads/ic_triangle/ic_triangle_inactive.svg';
 import { connect, useSelector } from 'react-redux';
-import Frame from '../frame/Frame';
-import { convertProportionToPx } from '../../helpers/utils';
+import Frame from '../Frame/Frame';
+import { convertProportionToPx } from '../../helpers/position.helper';
 import ImageCorePreview from '../Images/ImageCorePreview';
 import imageCropAction from '../../store/imageStore/actions';
+import { useWindowWidth } from '../../hooks/useWindowWidth';
+import Responsive from '../Responsive/Responsive';
 
 const Container = styled.div`
   position: relative;
@@ -23,6 +25,9 @@ const Container = styled.div`
 
 const BookContainer = styled.div`
   padding: 0px 20px 20px;
+  @media (max-width: 1024px) {
+    padding: 0px;
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -52,6 +57,10 @@ const BookWrapper = styled.div`
       border-radius: 8px;
     }
   }
+  @media (max-width: 1024px) {
+    height: calc(100vh - 170px);
+    margin: 0;
+  }
 `;
 
 const Book = styled.div`
@@ -69,6 +78,15 @@ const CoverContainer = styled.div`
   border: ${props =>
     props.selected ? 'solid 3px #494b4d;' : 'solid 3px transparent;'};
   cursor: pointer;
+  @media (max-width: 1024px) {
+    display: initial;
+    margin: 10px 0;
+    border: solid 3px transparent;
+    [data-outside='frame'] {
+      border: ${props =>
+        props.selected ? 'solid 3px #494b4d;' : 'solid 3px transparent;'};
+    }
+  }
 `;
 
 const BookOption = styled.div`
@@ -149,70 +167,121 @@ const ButtonBackIcon = styled.img`
 `;
 
 const SortableItem = SortableElement(
-  ({ item, setSpread, style, key, _index, removeSpread }) => {
+  ({ item, setSpread, style, key, _index, removeSpread, addSpread }) => {
     const spread = useSelector(
       store =>
         store.imageStore.present.spread ||
         store.imageStore.present.initImageState[0].idPage,
     );
     return (
-      <Book key={item.idPage} style={style}>
-        <CoverContainer
-          key={item.id}
-          selected={item.idPage === spread}
-          onClick={() => {
-            setSpread(item);
-          }}>
-          <Frame data={{ frameSize: { width: 220, height: 110 } }}>
-            {({ width, height }) => {
-              return item.assets.map((item, index) => {
-                const { targetrect } = item;
-                const rect = convertProportionToPx(targetrect, {
-                  frameWidth: width,
-                  frameHeight: height,
-                });
-                return (
-                  <ImageCorePreview
-                    key={item.idElement}
-                    item={item}
-                    rect={rect}
-                    editable={false}
-                  />
-                );
-              });
-            }}
-          </Frame>
-        </CoverContainer>
-        <BookOption>
-          <span>{_index * 2 || ''}</span>
-          <ButtonDelete
-            onClick={e => {
-              e.stopPropagation();
-              removeSpread(_index);
-            }}>
-            <ButtonDeleteIcon src={TrashIcon} alt={''} />
-          </ButtonDelete>
-          <span>{_index * 2 + 1 || ''}</span>
-        </BookOption>
-        <ButtonAdd>
-          <span>+</span>
-        </ButtonAdd>
-      </Book>
+      <Responsive>
+        {matches => (
+          <>
+            {matches.mobile ? (
+              <Book key={item.id} style={style}>
+                <CoverContainer
+                  key={item.id}
+                  selected={item.idPage === spread}
+                  onClick={() => {
+                    setSpread(item);
+                  }}>
+                  <Frame
+                    isInSpead
+                    data={{ frameSize: { width: 350, height: 180 } }}>
+                    {({ width, height }) => {
+                      return item.assets.map((item, index) => {
+                        const { targetrect } = item;
+                        const rect = convertProportionToPx(targetrect, {
+                          frameWidth: width,
+                          frameHeight: height,
+                        });
+                        return (
+                          <ImageCorePreview
+                            key={item.idElement}
+                            item={item}
+                            rect={rect}
+                            editable={false}
+                          />
+                        );
+                      });
+                    }}
+                  </Frame>
+                </CoverContainer>
+              </Book>
+            ) : (
+              <Book key={item.id} style={style}>
+                <CoverContainer
+                  selected={item.idPage === spread}
+                  onClick={() => {
+                    setSpread(item);
+                  }}>
+                  <Frame
+                    isInSpead
+                    data={{ frameSize: { width: 220, height: 110 } }}>
+                    {({ width, height }) => {
+                      return item.assets.map((item, index) => {
+                        const { targetrect } = item;
+                        const rect = convertProportionToPx(targetrect, {
+                          frameWidth: width,
+                          frameHeight: height,
+                        });
+                        return (
+                          <ImageCorePreview
+                            key={item.idElement}
+                            item={item}
+                            rect={rect}
+                            editable={false}
+                          />
+                        );
+                      });
+                    }}
+                  </Frame>
+                </CoverContainer>
+                <BookOption>
+                  <span>{_index * 2 || ''}</span>
+                  <ButtonDelete
+                    onClick={e => {
+                      e.stopPropagation();
+                      removeSpread(_index);
+                    }}>
+                    <ButtonDeleteIcon src={TrashIcon} alt={''} />
+                  </ButtonDelete>
+                  <span>{_index * 2 + 1 || ''}</span>
+                </BookOption>
+                <ButtonAdd onClick={() => addSpread(_index + 1)}>
+                  <span>+</span>
+                </ButtonAdd>
+              </Book>
+            )}
+          </>
+        )}
+      </Responsive>
     );
   },
 );
 
 const SortableList = SortableContainer(
   ({ height, width, image, renderRow }) => {
+    const isMobile = useWindowWidth() <= 1024;
     return (
-      <List
-        height={height}
-        rowCount={image.length}
-        rowHeight={215}
-        rowRenderer={renderRow}
-        width={width}
-        style={{ outline: 'none' }}
-      />
+      <div
+        onContextMenu={e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}>
+        <List
+          height={height}
+          rowCount={image.length}
+          rowHeight={
+            isMobile
+              ? ({ index }) => (index === image.length - 1 ? 500 : 230)
+              : ({ index }) => 220
+          }
+          rowRenderer={renderRow}
+          width={width}
+          style={{ outline: 'none' }}
+        />
+      </div>
     );
   },
 );
@@ -224,6 +293,7 @@ function BookSpreads({
   setSpread,
   changeOrderSpread,
   removeSpread,
+  addSpread,
   spread,
 }) {
   const renderRow = React.useCallback(
@@ -237,49 +307,68 @@ function BookSpreads({
           style={style}
           setSpread={setSpread}
           removeSpread={removeSpread}
+          addSpread={addSpread}
           key={item.idPage}
         />
       );
     },
-    [image, setSpread, removeSpread],
+    [image, setSpread, removeSpread, addSpread],
   );
 
-  const renderList = React.useCallback(() => {
-    return (
-      <AutoSizer>
-        {({ width, height }) => {
-          return (
-            <SortableList
-              pressDelay={200}
-              pressThreshold={20}
-              width={width}
-              height={height}
-              image={image}
-              renderRow={renderRow}
-              onSortStart={e => console.log(e)}
-              onSortEnd={({ oldIndex, newIndex }) =>
-                changeOrderSpread(oldIndex, newIndex)
-              }
-            />
-          );
-        }}
-      </AutoSizer>
-    );
-  }, [image, renderRow, changeOrderSpread]);
-
+  const renderList = React.useCallback(
+    withDelay => {
+      return (
+        <AutoSizer defaultHeight={1000} defaultWidth={400}>
+          {({ width, height }) => {
+            return (
+              <SortableList
+                pressThreshold={200}
+                pressDelay={withDelay ? 400 : undefined}
+                distance={withDelay ? undefined : 40}
+                width={width}
+                height={height}
+                image={image}
+                renderRow={renderRow}
+                onSortStart={e => console.log(e)}
+                onSortEnd={({ oldIndex, newIndex }) =>
+                  changeOrderSpread(oldIndex, newIndex)
+                }
+              />
+            );
+          }}
+        </AutoSizer>
+      );
+    },
+    [image, renderRow, changeOrderSpread],
+  );
   return (
-    <Container show={show}>
-      <ButtonBack show={show} onClick={hidden}>
-        <ButtonBackIcon src={ArrowBackIcon} alt={''} />
-      </ButtonBack>
-      <ElementGroup show={show}>
-        <BookWrapper>
-          <BookContainer style={{ flex: 1, height: '100%' }}>
-            {renderList()}
-          </BookContainer>
-        </BookWrapper>
-      </ElementGroup>
-    </Container>
+    <Responsive>
+      {matches => (
+        <>
+          {matches.mobile && (
+            <BookWrapper>
+              <BookContainer style={{ flex: 1, height: '100%' }}>
+                {renderList(true)}
+              </BookContainer>
+            </BookWrapper>
+          )}
+          {matches.desktop && (
+            <Container show={show} key={2}>
+              <ButtonBack show={show} onClick={hidden}>
+                <ButtonBackIcon src={ArrowBackIcon} alt={''} />
+              </ButtonBack>
+              <ElementGroup show={show}>
+                <BookWrapper>
+                  <BookContainer style={{ flex: 1, height: '100%' }}>
+                    {renderList(false)}
+                  </BookContainer>
+                </BookWrapper>
+              </ElementGroup>
+            </Container>
+          )}
+        </>
+      )}
+    </Responsive>
   );
 }
 
@@ -296,6 +385,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(imageCropAction.image.reorderSpread({ oldIndex, newIndex })),
     removeSpread: index =>
       dispatch(imageCropAction.image.removeSpread({ index })),
+    addSpread: index => dispatch(imageCropAction.image.addNewSpread({ index })),
   };
 };
 

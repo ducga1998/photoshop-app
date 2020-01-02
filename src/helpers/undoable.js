@@ -1,5 +1,6 @@
 import deepDiff, { applyChange } from 'deep-diff';
 import _ from 'lodash';
+import { isClientSide } from './render.helper';
 
 export const undoableConst = {
   UNDO: 'UNDOABLE/UNDO',
@@ -149,6 +150,6 @@ function memorySizeOf(obj) {
   return formatByteSize(sizeOf(obj));
 }
 
-if (process.browser) {
+if (isClientSide()) {
   window.getMM = memorySizeOf;
 }

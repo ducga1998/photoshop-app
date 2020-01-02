@@ -53,6 +53,9 @@ const Container = styled.div`
   height: calc(100vh - 70px);
   background-color: #f4f4f4;
   transition: ${props => (props.show ? '0.3s ease-in-out 0.3s' : '0.3s')};
+  @media (max-width: 1024px) {
+    width: ${props => (props.show ? '100%' : '0px')};
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -61,6 +64,9 @@ const ElementGroup = styled.div`
   opacity: ${props => (props.show ? 1 : 0)};
   transition: ${props =>
     props.show ? 'opacity 0.3s ease-in-out 0.6s' : 'none'};
+  @media (max-width: 1024px) {
+    width: ${props => (props.show ? '100%' : '0px')};
+  }
 `;
 
 const TemplatesWrapper = styled.div`
@@ -117,6 +123,9 @@ const PhotosWrapper = styled.div`
     background: #bdbdbd;
     border-radius: 8px;
   }
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 `;
 
 const Photos = styled.div`
@@ -124,6 +133,9 @@ const Photos = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 30px 20px 10px;
+  @media (max-width: 1024px) {
+    flex-wrap: initial;
+  }
 `;
 
 const BorderPhoto = styled.div`
@@ -188,7 +200,7 @@ const ButtonBackIcon = styled.img`
   height: 15px;
 `;
 
-function Templates({ show, hidden }) {
+function Templates({ isMobile, show, hidden }) {
   const [tabActive, setTabActive] = useState(0);
 
   const changeTab = useCallback(tab => {
@@ -235,7 +247,15 @@ function Templates({ show, hidden }) {
         return null;
     }
   }, [tabActive]);
-
+  if (isMobile) {
+    return (
+      <Container show={show}>
+        <PhotosWrapper>
+          <Photos>{renderTab()}</Photos>
+        </PhotosWrapper>
+      </Container>
+    );
+  }
   return (
     <Container show={show}>
       <ButtonBack show={show} onClick={hidden}>

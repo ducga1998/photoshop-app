@@ -27,6 +27,12 @@ const Container = styled.div`
   height: calc(100vh - 70px);
   background-color: #f4f4f4;
   transition: ${props => (props.show ? '0.3s ease-in-out 0.3s' : '0.3s')};
+  @media (max-width: 1024px) {
+    height: initial;
+    width: ${props => (props.show ? '100%' : '0px')};
+    position: absolute;
+    top: 0px;
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -35,6 +41,9 @@ const ElementGroup = styled.div`
   opacity: ${props => (props.show ? 1 : 0)};
   transition: ${props =>
     props.show ? 'opacity 0.3s ease-in-out 0.6s' : 'none'};
+  @media (max-width: 1024px) {
+    width: ${props => (props.show ? '100%' : '0px')};
+  }
 `;
 
 const PhotosWrapper = styled.div`
@@ -62,6 +71,9 @@ const Photos = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 0 20px;
+  @media (max-width: 1024px) {
+    flex-wrap: initial;
+  }
 `;
 
 const BorderPhoto = styled.div`
@@ -112,6 +124,9 @@ const ButtonBack = styled.div`
 
   &:hover {
     background-color: #b06ab3;
+  }
+  @media (max-width: 1024px) {
+    display: none;
   }
 `;
 

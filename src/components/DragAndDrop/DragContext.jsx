@@ -40,16 +40,28 @@ export class DragProvider extends React.Component {
 
 export const Draggable = withDragProps(
   class Drag extends React.PureComponent {
-    handleDragStart = () => {
+    handleDragStart = e => {
       this.props.setValue('isDragging', true);
       this.props.setValue('draggingItem', this.props.item);
       this.props.setValue('draggingType', this.props.type);
+      this.props.onDragStart &&
+        this.props.onDragStart({
+          e,
+          item: this.props.item,
+          type: this.props.type,
+        });
     };
 
-    handleDragStop = () => {
+    handleDragStop = e => {
       this.props.setValue('isDragging', false);
       this.props.setValue('draggingItem', null);
       this.props.setValue('draggingType', null);
+      this.props.onDragEnd &&
+        this.props.onDragEnd({
+          e,
+          item: this.props.item,
+          type: this.props.type,
+        });
     };
 
     render() {
@@ -72,29 +84,31 @@ class Drop extends React.PureComponent {
     e.stopPropagation();
     if (
       this.props.isDragging &&
-      (!this.props.acceptType ||
-        this.props.acceptType === this.props.draggingType)
+      (!this.props.acceptTypes ||
+        this.props.acceptTypes.indexOf(this.props.draggingType) > -1)
     ) {
-      this.setState({ isDragOver: true });
+      this.props.onDragOver && this.props.onDragOver(e);
+      this.setState({ isDragOver: e.target });
     } else {
-      this.setState({ isDragOver: false });
+      this.setState({ isDragOver: null });
     }
   };
 
   onDragLeave = e => {
-    console.log('leave', e.target);
     e.stopPropagation();
     this.setState({ isDragOver: false });
+    this.props.onDragLeave && this.props.onDragLeave(e);
   };
 
   onDrop = e => {
+    e.preventDefault();
     e.stopPropagation();
     if (
       this.props.isDragging &&
-      (!this.props.acceptType ||
-        this.props.acceptType === this.props.draggingType)
+      (!this.props.acceptTypes ||
+        this.props.acceptTypes.indexOf(this.props.draggingType) > -1)
     ) {
-      this.props.onDrop(this.props.draggingItem);
+      this.props.onDrop(this.props.draggingItem, this.props.draggingType, e);
       this.setState({ isDragOver: false });
     }
   };
@@ -107,8 +121,8 @@ class Drop extends React.PureComponent {
       isDragOver: this.state.isDragOver,
       isDragging:
         this.props.isDragging &&
-        (!this.props.acceptType ||
-          this.props.acceptType === this.props.draggingType),
+        (!this.props.acceptTypes ||
+          this.props.acceptTypes.indexOf(this.props.draggingType) > -1),
     });
   }
 }

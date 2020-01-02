@@ -1,14 +1,15 @@
 import EXIF from 'exif-js';
+import { isClientSide } from './render.helper';
 
 const storage = {
   key: 'orientation',
   setItem(value) {
-    if (process.browser) {
+    if (isClientSide()) {
       localStorage.setItem(this.key, JSON.stringify(value));
     }
   },
   getItem() {
-    const store = process.browser && localStorage.getItem(this.key);
+    const store = isClientSide() && localStorage.getItem(this.key);
     if (!store) {
       return null;
     }

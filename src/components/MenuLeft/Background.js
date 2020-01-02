@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import ArrowBackIcon from '../../static/img/ic_menu_left/ic_arrow_back/ic_arrow_back.svg';
 
-const background = [
+export const LIST_BACKGROUND_COLOR = [
   { id: 1, color: '#fff' },
   { id: 2, color: 'linear-gradient(90deg, #EE9CA7 0%, #FFDDE1 100%)' },
   { id: 3, color: 'linear-gradient(90deg, #FFEFBA 0%, #FFFFFF 100%)' },
@@ -32,6 +32,12 @@ const Container = styled.div`
   height: calc(100vh - 70px);
   background-color: #f4f4f4;
   transition: ${props => (props.show ? '0.3s ease-in-out 0.3s' : '0.3s')};
+  @media (max-width: 1024px) {
+    height: initial;
+    width: ${props => (props.show ? '100%' : '0px')};
+    position: ${props => (props.isMobile ? 'absolute' : 'relative')};
+    top: 0px;
+  }
 `;
 
 const ElementGroup = styled.div`
@@ -40,6 +46,9 @@ const ElementGroup = styled.div`
   opacity: ${props => (props.show ? 1 : 0)};
   transition: ${props =>
     props.show ? 'opacity 0.3s ease-in-out 0.6s' : 'none'};
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 `;
 
 const PhotosWrapper = styled.div`
@@ -60,6 +69,10 @@ const PhotosWrapper = styled.div`
     background: #bdbdbd;
     border-radius: 8px;
   }
+  @media (max-width: 1024px) {
+    height: initial;
+    margin: 18px 0px;
+  }
 `;
 
 const Photos = styled.div`
@@ -67,6 +80,9 @@ const Photos = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 0 20px;
+  @media (max-width: 1024px) {
+    flex-wrap: initial;
+  }
 `;
 
 const BorderPhoto = styled.div`
@@ -76,6 +92,7 @@ const BorderPhoto = styled.div`
   width: 100px;
   height: 100px;
   margin-bottom: 15px;
+
   border-radius: 4px;
   border: solid 3px transparent;
   cursor: pointer;
@@ -94,7 +111,6 @@ const SubBorderPhoto = styled.div`
   border: solid 1px #e0e0e0;
   border-radius: 4px;
   cursor: pointer;
-
   ${BorderPhoto}:hover & {
     border: solid 1px transparent;
   }
@@ -125,22 +141,25 @@ const ButtonBack = styled.div`
   &:hover {
     background-color: #b06ab3;
   }
+  @media (max-width: 1024px) {
+    display: none;
+  }
 `;
 
 const ButtonBackIcon = styled.img`
   height: 15px;
 `;
 
-function Background({ show, hidden }) {
+function Background({ isMobile, show, hidden }) {
   return (
-    <Container show={show}>
+    <Container isMobile={isMobile} show={show}>
       <ButtonBack show={show} onClick={hidden}>
         <ButtonBackIcon src={ArrowBackIcon} alt={''} />
       </ButtonBack>
       <ElementGroup show={show}>
         <PhotosWrapper>
           <Photos>
-            {background.map(item => (
+            {LIST_BACKGROUND_COLOR.map(item => (
               <BorderPhoto key={item.id}>
                 <SubBorderPhoto>
                   <Photo style={{ background: item.color }} />

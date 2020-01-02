@@ -1,8 +1,5 @@
-import { createActions, createAction } from 'redux-actions';
+import { createActions } from 'redux-actions';
 
-if (process.browser) {
-  window.createAction = createAction;
-}
 const imageStoreAction = createActions({
   IMAGE: {
     TEST: null,
@@ -18,7 +15,10 @@ const imageStoreAction = createActions({
     RE_LAYOUT: null,
     CHANGE_GALLERY: null,
     SELECT_IMAGE_FROM_GALLERY: null,
+    CHANGE_VIEW_MOBILE: null,
+    TOGGLE_ACTIVE_SPREAD: null,
+    FETCH_DATA_RELAYOUT: null,
+    ADD_NEW_SPREAD: null,
   },
 });
-
 export default imageStoreAction;

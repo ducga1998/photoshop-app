@@ -1,25 +1,23 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useCallback, useMemo, useState } from 'react';
+import styled from 'styled-components';
 
 import Switch from '../UI/Switch/Switch';
 import ArrowBackIcon from '../../static/img/ic_menu_left/ic_arrow_back/ic_arrow_back.svg';
 import PhotoIcon from '../../static/img/ic_photo_gallery/ic_photo/ic_photo.svg';
-// import BigPhotoIcon from '../../static/img/ic_menu_left/ic_photo/ic_photo_inactive.svg';
 import ColorWandIcon from '../../static/img/ic_photo_gallery/ic_color_wand/ic_color_wand.svg';
 import BackgroundIcon from '../../static/img/ic_photo_gallery/ic_background/ic_background.svg';
-import SelectedIcon from '../../static/img/ic_photo_gallery/ic_selected_gallery/ic_selected_gallery.svg';
-import { convertProportionToPx, STATE_DRAGGING } from '../../helpers/utils';
-import config from '../../config';
+import Hide from '../../static/img/ic_core/hide.component.svg';
+import AutoFill from '../../static/img/ic_core/autofill.component.svg';
+import Plus from '../../static/img/ic_core/plus.component.svg';
 import { connect } from 'react-redux';
 import authorizedRequest from '../../helpers/request/authorizedRequest';
 import axios from 'axios';
 import LazyLoad from 'react-lazyload';
 import { toast } from 'react-toastify';
 import imageStoreAction from '../../store/imageStore/actions';
-import ImageCorePreview from '../Images/ImageCorePreview';
-import Frame from '../frame/Frame';
 import { createSelector } from 'reselect';
 import _ from 'lodash';
+import { ImageGallery } from '../Layout/ImageGallery';
 
 const Container = styled.div`
   position: relative;
@@ -124,49 +122,11 @@ const PhotosWrapper = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 0 20px;
-`;
-
-const BorderPhoto = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  width: 94px;
-  height: 94px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 300ms ease-in-out;
-  padding: 3px;
-  border: 2px solid #e0e0e0;
-  .selectedIcon {
-    ${props =>
-      props.selected
-        ? css`
-            display: block;
-          `
-        : css`
-            display: none;
-          `}
+  @media (max-width: 1024px) {
+    flex-wrap: initial;
+    height: auto;
+    background: #f4f4f4;
   }
-  ${props =>
-    props.dragging && props.selected
-      ? css`
-          transform: scale(0.75);
-          border: solid 2px #494b4d;
-          & > div {
-            opacity: 0.8;
-          }
-        `
-      : ''}
-`;
-
-const SelectedGallery = styled.img`
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 9;
 `;
 
 const ButtonBack = styled.div`
@@ -190,11 +150,23 @@ const ButtonBack = styled.div`
     background-color: #b06ab3;
   }
 `;
-
+const WrapperTool = styled.div`
+  width: 300px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #e0e0e0;
+  margin: 20px 0px;
+  svg {
+    border-radius: 50%;
+    background: #e0e0e0;
+    padding: 10px;
+    margin: 0px 10px;
+    cursor: pointer;
+  }
+`;
 const ButtonBackIcon = styled.img`
   height: 15px;
 `;
-const userID = 'u-q7gj6ScmFeiCH4sYGqEY4A/gallery/';
 
 function PhotoGallery({
   show,
@@ -204,21 +176,18 @@ function PhotoGallery({
   gallerySelected,
   selectedImageFromGallery,
   usedPhoto,
+  isMobile,
 }) {
   const [sort, setSort] = useState(true);
   const [dragging, setDragging] = useState(false);
-  const [hideUsed, setHideUsed] = useState(false);
-  const handleDrapStart = (event, idSrc) => {
-    setDragging(true);
-    if (gallerySelected.indexOf(idSrc) > -1) {
+  const [showUsed, setShowUsed] = useState(false);
+  const handleDrapStart = uniqueId => {
+    if (gallerySelected.indexOf(uniqueId) > -1) {
       // drag all
     } else {
-      selectedImageFromGallery([idSrc]);
+      selectedImageFromGallery([uniqueId]);
     }
-    const target = event.target;
-    if (!target) return;
-    const src = target.getAttribute('data-src');
-    STATE_DRAGGING.src = src;
+    setDragging(true);
   };
 
   async function onChangeHandler(e) {
@@ -243,7 +212,6 @@ function PhotoGallery({
       toast.success('Import success');
     }
     changeGallery(files);
-    // console.log("files",files)
   }
 
   const setSelected = useCallback(
@@ -266,15 +234,64 @@ function PhotoGallery({
   );
 
   const filteredGallery = useMemo(() => {
-    if (!hideUsed) {
+    if (!showUsed) {
       return gallery;
     } else {
-      return gallery.filter(i => usedPhoto.indexOf(i) === -1);
+      return gallery.filter(i => usedPhoto.indexOf(i) > -1);
     }
-  }, [hideUsed, gallery, usedPhoto]);
+  }, [showUsed, gallery, usedPhoto]);
 
+  function renderGalleryList(isInSpread) {
+    return (
+      show &&
+      filteredGallery.map((idSrc, key) => {
+        return (
+          <LazyLoad key={idSrc} scrollContainer={'#photo-wrapper'} height={61}>
+            {/*<Draggable*/}
+            {/*  onDragStart={({ e, item }) => handleDrapStart(e, item.uniqueId)}*/}
+            {/*  onDragEnd={() => setDragging(false)}*/}
+            {/*  type={'image-gallery'}*/}
+            {/*  item={{*/}
+            {/*    src: src,*/}
+            {/*    uniqueId: idSrc,*/}
+            {/*  }}>*/}
+            {/*  {props => (*/}
+            {/*    */}
+            {/*  )}*/}
+            {/*</Draggable>*/}
+            <ImageGallery
+              idSrc={idSrc}
+              onDragStart={uniqueId => handleDrapStart(uniqueId)}
+              onDragEnd={() => setDragging(false)}
+              gallerySelected={gallerySelected}
+              isInSpread={true}
+              dragging={dragging}
+              onClick={e => setSelected(e, idSrc)}
+            />
+          </LazyLoad>
+        );
+      })
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <PhotosWrapper id={'photo-wrapper'}>
+        {show && (
+          <>
+            <WrapperTool>
+              <Plus />
+              <AutoFill />
+              <Hide />
+            </WrapperTool>
+            {renderGalleryList(true)}
+          </>
+        )}
+      </PhotosWrapper>
+    );
+  }
   return (
-    <Container show={show}>
+    <Container show={show} onContextMenu={e => e.preventDefault()}>
       <ButtonBack show={show} onClick={hidden}>
         <ButtonBackIcon src={ArrowBackIcon} alt={''} />
       </ButtonBack>
@@ -282,7 +299,7 @@ function PhotoGallery({
         <ButtonGroup>
           <Button>
             <ButtonIcon src={PhotoIcon} alt={''} />
-            <label or="file-upload">
+            <label for="file-upload">
               Add photos
               <input
                 id="file-upload"
@@ -304,8 +321,8 @@ function PhotoGallery({
           <SwitchGroup>
             <span>Show my used photos</span>
             <Switch
-              value={hideUsed}
-              onChange={() => setHideUsed(prev => !prev)}
+              value={showUsed}
+              onChange={() => setShowUsed(prev => !prev)}
             />
           </SwitchGroup>
         </ButtonGroup>
@@ -315,56 +332,7 @@ function PhotoGallery({
             <p>▲</p>
           </Sort>
           <PhotosWrapper id={'photo-wrapper'}>
-            {show &&
-              filteredGallery.map((idSrc, key) => {
-                const src = config.BASE_URL + userID + idSrc;
-                return (
-                  <LazyLoad
-                    key={idSrc}
-                    scrollContainer={'#photo-wrapper'}
-                    height={61}>
-                    <BorderPhoto
-                      data-src={src}
-                      selected={gallerySelected.find(i => i === idSrc)}
-                      dragging={dragging}
-                      onDragStart={e => handleDrapStart(e, idSrc)}
-                      onDragEnd={() => setDragging(false)}
-                      onClick={e => setSelected(e, idSrc)}
-                      draggable
-                      key={idSrc}>
-                      <SelectedGallery
-                        src={SelectedIcon}
-                        className={'selectedIcon'}
-                      />
-                      <Frame data={{ frameSize: { width: 94, height: 94 } }}>
-                        {({ width, height }) => {
-                          const targetrect = {
-                            x: 0,
-                            y: 0,
-                            width: 1,
-                            height: 1,
-                          };
-                          const rect = convertProportionToPx(targetrect, {
-                            frameWidth: width,
-                            frameHeight: height,
-                          });
-                          return (
-                            <ImageCorePreview
-                              editable={false}
-                              rect={rect}
-                              item={{
-                                src: src,
-                                idElement: 'gallery' + src,
-                              }}
-                            />
-                          );
-                        }}
-                      </Frame>
-                      {/*<Photo src={src} crossOrigin={'anonymous'} />*/}
-                    </BorderPhoto>
-                  </LazyLoad>
-                );
-              })}
+            {renderGalleryList()}
           </PhotosWrapper>
         </PhotoGroup>
       </ElementGroup>
