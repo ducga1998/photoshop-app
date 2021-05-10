@@ -28,7 +28,7 @@
     "fabric": "3.5.1",
     "fabric-with-gestures": "3.5.0",
     "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "next": "9.3.2",
     "next-images": "1.1.2",
     "next-redux-wrapper": "3.0.0-alpha.3",
